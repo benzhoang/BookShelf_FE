@@ -2,6 +2,8 @@ import React from 'react'
 
 export default function HeaderPage() {
   return (
-    <div>HeaderPage</div>
+    <div>
+      dd
+    </div>
   )
 }
