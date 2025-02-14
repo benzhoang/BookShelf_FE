@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { BsSearch } from "react-icons/bs";
 import { HiOutlineShoppingBag } from "react-icons/hi";
-import EditListProduct from "../ModalDashborad/EditListProduct";
+import EditListProduct from "../ModalListProduct/EditListProduct";
 import {
   Table,
   Form,
@@ -12,8 +12,8 @@ import {
   Card,
 } from "react-bootstrap";
 import { FaBoxOpen } from "react-icons/fa";
-import DeleteListProduct from "../ModalDashborad/DeleteListProduct";
-import AddListProduct from "../ModalDashborad/AddListProduct";
+import DeleteListProduct from "../ModalListProduct/DeleteListProduct";
+import AddListProduct from "../ModalListProduct/AddListProduct";
 
 const ProductList = () => {
   const [searchTerm, setSearchTerm] = useState("");
