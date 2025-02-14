@@ -1,0 +1,20 @@
+.custom-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}
+.modal-custom {
+  background-color: #797575;
+  color: white;
+  border: 0 !important;
+}
+.custom-modal .modal-footer {
+  background-color: #797575;
+  color: white;
+  border: 0;
+}
+
+.btn-cancel {
+  background-color: #b0a9a9;
+}
