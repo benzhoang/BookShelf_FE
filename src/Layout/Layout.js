@@ -10,7 +10,7 @@ export default function ({ Component }) {
       }}
     >
       <div style={{
-        width: '30%',
+        width: '20%',
         background : '#4A4A4A',
         color: 'white',
         padding: '1%'
@@ -18,7 +18,7 @@ export default function ({ Component }) {
         <HeaderPage />
       </div>
       <div style={{
-        width:  '70%'
+        width:  '80%'
       }}>
         <Component />
       </div>

@@ -12,10 +12,7 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/listProduct" element={<ProductList />} />
-          <Route path="/orderList" element={<OrderList />} />
-          <Route path="/accountList" element={<AccountList />} />
+          <Route path="/" element={<Layout Component={ProductList} />} />
         </Routes>
       </BrowserRouter>
     </div>
