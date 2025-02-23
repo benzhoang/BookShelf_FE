@@ -72,7 +72,7 @@ const AccountList = () => {
   };
 
   return (
-    <div style={{ backgroundColor: "#D3D3D3" }}>
+    <div style={{ backgroundColor: "#D3D3D3" , height: '100vh'}}>
       <Container fluid className="p-5">
         <Card>
           <Card.Header className="bg-success text-white">

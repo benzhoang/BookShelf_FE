@@ -18,7 +18,9 @@ export default function ({ Component }) {
         <HeaderPage />
       </div>
       <div style={{
-        width:  '80%'
+        width:  '80%',
+        height: '100vh',
+        overflow: 'auto'
       }}>
         <Component />
       </div>

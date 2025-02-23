@@ -1,9 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import HomePage from "./Pages/HomePage/HomePage";
 import Layout from "./Layout/Layout";
-import LoginPage from "./Pages/UserPage/LoginPage";
 import ProductList from "./Pages/DashboardPage/ProductList";
+import LoginPage from "./Pages/LoginPage/LoginPage";
 import OrderList from "./Pages/DashboardPage/OrderList";
 import AccountList from "./Pages/DashboardPage/AccountList";
 
@@ -12,7 +11,10 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout Component={ProductList} />} />
+          <Route path="/product" element={<Layout Component={ProductList} />} />
+          <Route path="/order" element={<Layout Component={OrderList} />} />
+          <Route path="/account" element={<Layout Component={AccountList} />} />
+          <Route path="/login" element={<Layout Component={LoginPage} />} />
         </Routes>
       </BrowserRouter>
     </div>

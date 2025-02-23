@@ -67,16 +67,7 @@ const ProductList = () => {
       sold: 2,
       stock: 83,
       description: "Một câu chuyện hấp dẫn...",
-    },
-    {
-      id: 6,
-      code: "006",
-      name: "Thanh Gươm Diệt Quỷ",
-      price: "99.000đ",
-      sold: 21,
-      stock: 2,
-      description: "Một câu chuyện hấp dẫn...",
-    },
+    }
   ];
   const handleEdit = (book) => {
     setSelectedBook(book);
@@ -108,7 +99,7 @@ const ProductList = () => {
   return (
     <div style={{ backgroundColor: "#D3D3D3" }}>
       <Container fluid className=" p-5">
-        <Row className="mb-4 d-flex justify-content-between">
+        <Row className="mb-3 d-flex justify-content-between">
           <Col md={5}>
             <Card className="p-3 rounded-5 d-flex flex-row justify-content-between align-items-center">
               <Card.Body>
