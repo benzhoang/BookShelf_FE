@@ -111,7 +111,7 @@ export default function HeaderPage() {
           <li
             className={a4 ? "active" : ""}
             onClick={() => {
-              navigate('/login');
+              navigate('/');
               setA4(true);
               setA3(false);
               setA1(false);

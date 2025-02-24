@@ -3,8 +3,9 @@ import { BASE_URL, configHeader } from "./config"
 
 export const userServ={
     postLogin :(loginForm)=>{
+        console.log(loginForm)
         return axios({
-            url: `${BASE_URL}/api/QuanLyNguoiDung/DangNhap`,
+            url: `${BASE_URL}/api/auth/login`,
             method: "POST",
             headers: configHeader(),
             data: loginForm,
