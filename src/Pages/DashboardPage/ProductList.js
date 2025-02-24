@@ -14,14 +14,36 @@ import {
 import { FaBoxOpen } from "react-icons/fa";
 import DeleteListProduct from "../ModalListProduct/DeleteListProduct";
 import AddListProduct from "../ModalListProduct/AddListProduct";
-
+import { auth } from "../../firebase";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 const ProductList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
+  // Lắng nghe trạng thái đăng nhập
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Hàm đăng xuất
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Đăng xuất khỏi Firebase
+      navigate("/login");
+    } catch (error) {
+      console.error("Error signing out:", error.message);
+    }
+  };
   const products = [
     {
       id: 1,
@@ -67,7 +89,7 @@ const ProductList = () => {
       sold: 2,
       stock: 83,
       description: "Một câu chuyện hấp dẫn...",
-    }
+    },
   ];
   const handleEdit = (book) => {
     setSelectedBook(book);
@@ -119,7 +141,24 @@ const ProductList = () => {
             </Card>
           </Col>
         </Row>
-
+        {user && (
+          <div className="d-flex justify-content-end align-items-center mb-3">
+            <img
+              src={user.photoURL} // Lấy ảnh từ Firebase user
+              alt="Profile"
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                marginRight: "10px",
+              }}
+            />
+            <span>{user.displayName}</span>
+            <Button variant="danger" onClick={handleLogout} className="ms-3">
+              Logout
+            </Button>
+          </div>
+        )}
         <Card>
           <Card.Header className="bg-success text-white">
             DANH SÁCH SẢN PHẨM
