@@ -32,7 +32,7 @@ const ProductList = () => {
       if (currentUser) {
         setUser(currentUser);
       } else {
-        navigate("/login");
+        navigate("/");
       }
     });
   }, [navigate]);
@@ -41,7 +41,7 @@ const ProductList = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error("Error signing out:", error.message);
     }
