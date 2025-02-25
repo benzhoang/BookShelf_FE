@@ -83,15 +83,6 @@ const ProductList = () => {
       stock: 20,
       description: "Một câu chuyện hấp dẫn...",
     },
-    {
-      id: 5,
-      code: "005",
-      name: "Thanh Gươm Diệt Quỷ",
-      price: "99.000đ",
-      sold: 2,
-      stock: 83,
-      description: "Một câu chuyện hấp dẫn...",
-    },
   ];
   const handleEdit = (book) => {
     setSelectedBook(book);
