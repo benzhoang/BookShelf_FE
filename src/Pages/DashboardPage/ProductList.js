@@ -15,9 +15,9 @@ import { FaBoxOpen } from "react-icons/fa";
 import DeleteListProduct from "../ModalListProduct/DeleteListProduct";
 import AddListProduct from "../ModalListProduct/AddListProduct";
 import { auth } from "../../firebase";
-import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { signOut, onAuthStateChangedListener } from "../../contexts/auth";
 const ProductList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
@@ -27,18 +27,20 @@ const ProductList = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Lắng nghe trạng thái đăng nhập
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    onAuthStateChangedListener((currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        navigate("/login");
+      }
     });
-    return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
-  // Hàm đăng xuất
+  // Logout Google
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Đăng xuất khỏi Firebase
+      await signOut(auth);
       navigate("/login");
     } catch (error) {
       console.error("Error signing out:", error.message);
@@ -136,7 +138,7 @@ const ProductList = () => {
               <Card.Body>
                 <Card.Title>TỔNG TỒN KHO</Card.Title>
                 <Card.Text>522 ~ $560.25K</Card.Text>
-              </Card.Body>{" "}
+              </Card.Body>
               <FaBoxOpen size={80} color="goldenrod" />
             </Card>
           </Col>
@@ -171,7 +173,7 @@ const ProductList = () => {
                   placeholder="Tìm kiếm sách..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="ps-5" // Dịch chữ vào bên phải để không bị đè lên icon
+                  className="ps-5"
                 />
                 <BsSearch
                   className="position-absolute "

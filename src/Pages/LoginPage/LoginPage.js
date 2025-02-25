@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { auth, provider, signInWithPopup } from "../../firebase";
 import { useNavigate } from "react-router-dom";
+import { signInWithGoogle } from "../../contexts/auth";
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
+  // Login with Google
   const handleSignIn = async () => {
     try {
-      const result = await signInWithPopup(auth, provider);
-      const userData = result.user;
-      setUser(userData);
-      navigate("/product");
+      const userData = await signInWithGoogle();
       console.log(userData);
+      navigate("/product");
     } catch (error) {
       console.error("Error signing in: ", error.message);
     }
@@ -87,8 +86,8 @@ export default function LoginPage() {
           className="flex justify-between text-sm mb-4"
         >
           <label
-            style={{ fontSize: "12px" }}
-            className="flex items-center mr-5"
+            style={{ fontSize: "12px", paddingRight: 100 }}
+            className="flex items-center  mr-5"
           >
             <input type="checkbox" /> Remember password
           </label>
@@ -122,12 +121,12 @@ export default function LoginPage() {
             color: "white",
             background: "#BEB9B9",
             fontSize: "20px",
-            padding: "10px 0 5px 0",
+            padding: "5px  0 5px 10px",
           }}
           onClick={handleSignIn}
         >
           <img
-            style={{ width: "10%", marginRight: "50px" }}
+            style={{ width: "10%", marginRight: "50px", borderRadius: 10 }}
             src="https://developers.google.com/identity/images/g-logo.png"
             alt="Google"
           />
