@@ -15,6 +15,14 @@ export const signInWithGoogle = async () => {
   }
 };
 
+export const reloadUser = async () => {
+  if (auth.currentUser) {
+    await auth.currentUser.reload();
+    return auth.currentUser;
+  }
+  return null;
+};
+
 export const signOut = async () => {
   try {
     await firebaseSignOut(auth);

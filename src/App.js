@@ -3,6 +3,7 @@ import "./App.css";
 import Layout from "./Layout/Layout";
 import ProductList from "./Pages/DashboardPage/ProductList";
 import LoginPage from "./Pages/LoginPage/LoginPage";
+import RegisterPage from "./Pages/LoginPage/RegisterPage";
 import OrderList from "./Pages/DashboardPage/OrderList";
 import AccountList from "./Pages/DashboardPage/AccountList";
 
@@ -15,6 +16,10 @@ function App() {
           <Route path="/order" element={<Layout Component={OrderList} />} />
           <Route path="/account" element={<Layout Component={AccountList} />} />
           <Route path="/" element={<Layout Component={LoginPage} />} />
+          <Route
+            path="/register"
+            element={<Layout Component={RegisterPage} />}
+          />
         </Routes>
       </BrowserRouter>
     </div>
