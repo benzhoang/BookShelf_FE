@@ -5,9 +5,7 @@ import { signInWithGoogle } from "../../contexts/auth";
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
 
-  // Login with Google
   const handleSignIn = async () => {
     try {
       const userData = await signInWithGoogle();
@@ -24,6 +22,7 @@ export default function LoginPage() {
         display: "flex",
         background: "#BEB9B9",
         justifyContent: "center",
+        alignItems: "center",
         padding: "5%",
       }}
     >
@@ -37,8 +36,19 @@ export default function LoginPage() {
           padding: "10px",
         }}
       >
-        <h2>Login</h2>
-        <p>Login to your account</p>
+        <h2>Register</h2>
+        <p>Create your account</p>
+
+        <div style={{ width: "70%" }} className="mb-4">
+          <input
+            type="text"
+            style={{
+              width: "100%",
+            }}
+            className="w-full p-2 border rounded"
+            placeholder="Username"
+          />
+        </div>
 
         <div style={{ width: "70%" }} className="mb-4">
           <input
@@ -82,19 +92,35 @@ export default function LoginPage() {
         </div>
 
         <div
-          style={{ textAlign: "left" }}
-          className="flex justify-between text-sm mb-4"
+          style={{
+            marginBottom: "5%",
+            position: "relative",
+            width: "70%",
+          }}
         >
-          <label
-            style={{ fontSize: "12px", paddingRight: 100 }}
-            className="flex items-center  mr-5"
+          <input
+            style={{
+              width: "100%",
+            }}
+            type={showPassword ? "text" : "password"}
+            className="w-full p-2 border rounded pr-10"
+            placeholder="Confirm Password"
+          />
+          <button
+            style={{
+              border: "none",
+              background: "none",
+              color: "blue",
+              position: "absolute",
+              left: "90%",
+              top: "15%",
+            }}
+            onClick={() => setShowPassword(!showPassword)}
           >
-            <input type="checkbox" /> Remember password
-          </label>
-          <a href="#" className="text-blue-500 ">
-            Forgot Password?
-          </a>
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
         </div>
+
         <div
           style={{ fontSize: "12px", width: "70%" }}
           className="text-center text-sm text-gray-500 mb-4"
@@ -107,7 +133,7 @@ export default function LoginPage() {
           style={{ width: "70%" }}
           className="w-full bg-black text-white py-2 rounded mb-4"
         >
-          Login
+          Register
         </button>
 
         <hr style={{ width: "70%" }} />
@@ -134,9 +160,9 @@ export default function LoginPage() {
         </button>
 
         <p className="text-center text-sm mt-4">
-          Don't have an account?{" "}
-          <a href="/register" className="font-semibold text-blue-500">
-            Sign up
+          Already have an account?
+          <a href="/" className="font-semibold text-blue-500">
+            Sign in
           </a>
         </p>
       </div>
