@@ -1,16 +1,26 @@
-import { BASE_URL, https} from "./config"
+import { BASE_URL, configHeader, https} from "./config"
 
-export const movieServ={
-    // getMovieList: () => {
-    //     return https.get("/api/QuanLyPhim/LayDanhSachPhim?maNhom=GP03");
-    // },
+export const bookServ={
+    getBook: () => {
+        return https.get("/api/books");
+    },
+    postBook: (dataForm) => {
+        console.log(dataForm)
+        return https.post("/api/books", dataForm,{ headers: configHeader() });
+    },
 
-    // getMovieByTheater: () => {
-    //     return https.get(`${BASE_URL}/api/QuanLyRap/LayThongTinLichChieuHeThongRap?maNhom=GP01`);
-    // },
-    // getDetailMovie:(maPhim) =>{
-    //     return https.get(`/api/QuanLyPhim/LayThongTinPhim?MaPhim=${maPhim}`)
-    // }
+    deleteBook: (id) => {
+        console.log(id)
+        return https.delete(`/api/books/${id}`,{ headers: configHeader() });
+    },
 
-    
+    getProfile: () =>{
+        return https.get("/api/users/profile", { headers: configHeader() });
+    },
+
+    getAllUser: () =>{
+        return https.get("/api/users", { headers: configHeader() });
+    }
+
+
 }

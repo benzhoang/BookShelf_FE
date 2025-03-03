@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./head.css";
-import { set } from "mongoose";
+import './head.css'
+import { bookServ } from "../../service/appService";
 
 export default function HeaderPage() {
   const [oSP, setOSP] = useState(false);
@@ -12,140 +12,108 @@ export default function HeaderPage() {
   const [a2, setA2] = useState(false);
   const [a3, setA3] = useState(false);
   const [a4, setA4] = useState(false);
-  const [a5, setA5] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  // Kiểm tra nếu user đã đăng nhập
+  useEffect(() => {
+    bookServ.getProfile()
+      .then((res)=>{
+        console.log(res.data)
+        setUser(res.data)
+      })
+      .catch((err)=>{
+        console.log(err)
+        navigate('/')
+      })
+  }, []);
+
+  // Hàm logout
+  const handleLogout = () => {
+    localStorage.removeItem("ACCESS_TOKEN");
+    localStorage.removeItem("REFRESH_TOKEN");
+    setUser(null);
+    navigate("/");
+  };
 
   return (
     <div>
-      <p
-        style={{
-          marginBottom: "30%",
-        }}
-      >
-        Hệ Thống Quản Lí
-      </p>
+      <p style={{ marginBottom: "30%" }}>Hệ Thống Quản Lí</p>
 
       <p>Danh mục sản phẩm</p>
-      <ul>
-        <li
-          onClick={() => setOSP(!oSP)}
-          style={{ marginBottom: "20px", cursor: "pointer" }}
-        >
+      {user && (
+        <ul>
+        <li onClick={() => setOSP(!oSP)} style={{ marginBottom: "20px", cursor: "pointer" }}>
           Quản Lý Sản Phẩm
         </li>
         {oSP && (
           <li
             className={a1 ? "active" : ""}
             onClick={() => {
-              navigate("/product");
+              navigate('/product');
               setA1(true);
               setA2(false);
               setA3(false);
               setA4(false);
             }}
-            style={{
-              marginBottom: "20px",
-              marginLeft: "50px",
-              cursor: "pointer",
-            }}
+            style={{ marginBottom: "20px", marginLeft: "50px", cursor: "pointer" }}
           >
             Danh Sách Sản Phẩm
           </li>
         )}
-        <li
-          onClick={() => setODH(!oDH)}
-          style={{ marginBottom: "20px", cursor: "pointer" }}
-        >
+        <li onClick={() => setODH(!oDH)} style={{ marginBottom: "20px", cursor: "pointer" }}>
           Quản Lý Đơn Hàng
         </li>
         {oDH && (
           <li
             className={a2 ? "active" : ""}
             onClick={() => {
-              navigate("/order");
+              navigate('/order');
               setA2(true);
               setA1(false);
               setA3(false);
               setA4(false);
             }}
-            style={{
-              marginBottom: "20px",
-              marginLeft: "50px",
-              cursor: "pointer",
-            }}
+            style={{ marginBottom: "20px", marginLeft: "50px", cursor: "pointer" }}
           >
             Danh Sách Đơn Hàng
           </li>
         )}
-        <li
-          onClick={() => setOTK(!oTK)}
-          style={{ marginBottom: "20px", cursor: "pointer" }}
-        >
+        {user?.role === 'Admin' && (
+          <li onClick={() => setOTK(!oTK)} style={{ marginBottom: "20px", cursor: "pointer" }}>
           Quản Lý Tài Khoản
         </li>
-        {oTK && (
+        )}
+        {oTK && user?.role === 'Admin' && (
           <li
             className={a3 ? "active" : ""}
             onClick={() => {
-              navigate("/account");
+              navigate('/account');
               setA3(true);
               setA1(false);
               setA2(false);
               setA4(false);
             }}
-            style={{
-              marginBottom: "20px",
-              marginLeft: "50px",
-              cursor: "pointer",
-            }}
+            style={{ marginBottom: "20px", marginLeft: "50px", cursor: "pointer" }}
           >
             Danh Sách Tài Khoản
           </li>
         )}
       </ul>
+      )}
 
-      <p onClick={() => setOl(!ol)} style={{ marginTop: "100px" }}>
-        Tài Khoản
-      </p>
+      <p onClick={() => setOl(!ol)} style={{ marginTop: "100px" }}>Tài Khoản</p>
       {ol && (
-        <ul>
-          <li
-            className={a4 ? "active" : ""}
-            onClick={() => {
-              navigate("/");
-              setA4(true);
-              setA3(false);
-              setA1(false);
-              setA2(false);
-              setA5(false);
-            }}
-            style={{
-              marginBottom: "20px",
-              marginLeft: "50px",
-              cursor: "pointer",
-            }}
-          >
-            Login
-          </li>
-          <li
-            className={a5 ? "active" : ""}
-            onClick={() => {
-              navigate("/register");
-              setA4(false);
-              setA3(false);
-              setA1(false);
-              setA2(false);
-              setA5(true);
-            }}
-            style={{
-              marginBottom: "20px",
-              marginLeft: "50px",
-              cursor: "pointer",
-            }}
-          >
-            Register
-          </li>
-        </ul>
+        <li style={{ marginBottom: "20px", marginLeft: "50px", cursor: "pointer" }}>
+          {user ? (
+            <>
+              <span>Xin chào, {user.userName}</span>
+              <button onClick={handleLogout} style={{ marginLeft: "10px", cursor: "pointer" }}>Logout</button>
+            </>
+          ) : (
+            <span onClick={() => navigate('/')}>Login</span>
+          )}
+        </li>
       )}
     </div>
   );

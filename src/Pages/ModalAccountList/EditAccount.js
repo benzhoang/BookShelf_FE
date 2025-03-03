@@ -1,9 +1,11 @@
-import React from "react";
+
 import { Modal, Form, Button } from "react-bootstrap";
 import "./editAccount.css";
 
+
 const EditListProduct = ({ show, handleClose, account }) => {
   if (!account) return null;
+  
 
   return (
     <Modal

@@ -1,131 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BsSearch } from "react-icons/bs";
 import { HiOutlineShoppingBag } from "react-icons/hi";
 import EditListProduct from "../ModalListProduct/EditListProduct";
-import {
-  Table,
-  Form,
-  Container,
-  Row,
-  Col,
-  Button,
-  Card,
-} from "react-bootstrap";
+import { Table, Form, Container, Row, Col, Button, Card } from "react-bootstrap";
 import { FaBoxOpen } from "react-icons/fa";
 import DeleteListProduct from "../ModalListProduct/DeleteListProduct";
 import AddListProduct from "../ModalListProduct/AddListProduct";
-import { auth } from "../../firebase";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { signOut, onAuthStateChangedListener } from "../../contexts/auth";
+import { bookServ } from "../../service/appService";
+
+const ITEMS_PER_PAGE = 5;
+
 const ProductList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+  const [dataBook, setDataBook] = useState([]);
+  const [curPage, setCurPage] = useState(1);
 
   useEffect(() => {
-    onAuthStateChangedListener((currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        navigate("/");
-      }
-    });
-  }, [navigate]);
+    bookServ.getBook()
+      .then((res) => setDataBook(res.data))
+      .catch((err) => console.log(err));
+  }, []);
 
-  // Logout Google
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/");
-    } catch (error) {
-      console.error("Error signing out:", error.message);
-    }
-  };
-  const products = [
-    {
-      id: 1,
-      code: "001",
-      name: "Thanh Gươm ",
-      price: "99.000đ",
-      sold: 21,
-      stock: 125,
-      description: "Một câu chuyện hấp dẫn...",
-    },
-    {
-      id: 2,
-      code: "002",
-      name: "Thanh Gươm Diệt Quỷ",
-      price: "99.000đ",
-      sold: 21,
-      stock: 125,
-      description: "Một câu chuyện hấp dẫn...",
-    },
-    {
-      id: 3,
-      code: "003",
-      name: "Thanh Gươm Diệt Quỷ",
-      price: "99.000đ",
-      sold: 21,
-      stock: 125,
-      description: "Một câu chuyện hấp dẫn...",
-    },
-    {
-      id: 4,
-      code: "004",
-      name: "Thanh Gươm Diệt Quỷ",
-      price: "99.000đ",
-      sold: 108,
-      stock: 20,
-      description: "Một câu chuyện hấp dẫn...",
-    },
-    {
-      id: 5,
-      code: "004",
-      name: "Thanh Gươm Diệt Quỷ",
-      price: "99.000đ",
-      sold: 108,
-      stock: 20,
-      description: "Một câu chuyện hấp dẫn...",
-    },
-  ];
   const handleEdit = (book) => {
     setSelectedBook(book);
     setShowEditModal(true);
   };
+  
   const handleDelete = (book) => {
     setSelectedBook(book);
     setShowDeleteModal(true);
   };
 
-  const handleAdd = () => {
-    setShowAddModal(true);
-  };
+  const handleAdd = () => setShowAddModal(true);
+  const handleCloseEdit = () => setShowEditModal(false);
+  const handleCloseDelete = () => setShowDeleteModal(false);
+  const handleCloseAdd = () => setShowAddModal(false);
 
-  const handleCloseEdit = () => {
-    setShowEditModal(false);
-    setSelectedBook(null);
-  };
-
-  const handleCloseDelete = () => {
-    setShowDeleteModal(false);
-    setSelectedBook(null);
-  };
-
-  const handleCloseAdd = () => {
-    setShowAddModal(false);
-  };
+  // Pagination
+  const totalPages = Math.ceil(dataBook.length / ITEMS_PER_PAGE);
+  const displayedBooks = dataBook.slice((curPage - 1) * ITEMS_PER_PAGE, curPage * ITEMS_PER_PAGE);
 
   return (
     <div style={{ backgroundColor: "#D3D3D3" }}>
-      <Container fluid className=" p-5">
-        <Row className="mb-3 d-flex justify-content-between">
+      <Container style={{ height: '100vh', padding: '2%'}}>
+        <Row className="mb-2 d-flex justify-content-between">
           <Col md={5}>
-            <Card className="p-3 rounded-5 d-flex flex-row justify-content-between align-items-center">
+            <Card className="p-4 rounded-5 d-flex flex-row justify-content-between align-items-center">
               <Card.Body>
                 <Card.Title>TỔNG ĐÃ BÁN</Card.Title>
                 <Card.Text>200 ~ $860.25K</Card.Text>
@@ -143,28 +67,9 @@ const ProductList = () => {
             </Card>
           </Col>
         </Row>
-        {user && (
-          <div className="d-flex justify-content-end align-items-center mb-3">
-            <img
-              src={user.photoURL} // Lấy ảnh từ Firebase user
-              alt="Profile"
-              style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                marginRight: "10px",
-              }}
-            />
-            <span>{user.displayName}</span>
-            <Button variant="danger" onClick={handleLogout} className="ms-3">
-              Logout
-            </Button>
-          </div>
-        )}
+
         <Card>
-          <Card.Header className="bg-success text-white">
-            DANH SÁCH SẢN PHẨM
-          </Card.Header>
+          <Card.Header className="bg-success text-white">DANH SÁCH SẢN PHẨM</Card.Header>
           <Card.Body>
             <Form className="mb-3 d-flex align-items-center justify-content-between">
               <div className="position-relative w-25">
@@ -175,30 +80,15 @@ const ProductList = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="ps-5"
                 />
-                <BsSearch
-                  className="position-absolute "
-                  style={{
-                    top: "50%",
-                    left: "10px",
-                    transform: "translateY(-50%)",
-                  }}
-                />
+                <BsSearch className="position-absolute " style={{ top: "50%", left: "10px", transform: "translateY(-50%)" }} />
               </div>
-              <div>
-                <Button
-                  variant="info"
-                  className="px-4 ms-2"
-                  onClick={() => handleAdd()}
-                >
-                  Thêm
-                </Button>
-              </div>
+              <Button variant="info" className="px-4 ms-2" onClick={handleAdd}>Thêm</Button>
             </Form>
 
             <Table striped bordered hover>
               <thead>
                 <tr className="text-center">
-                  <th>ID</th>
+                  <th>STT</th>
                   <th>Mã Sách</th>
                   <th>Tên Sách</th>
                   <th>Giá Bán</th>
@@ -208,53 +98,39 @@ const ProductList = () => {
                 </tr>
               </thead>
               <tbody>
-                {products
-                  .filter((product) =>
-                    product.name
-                      .toLowerCase()
-                      .includes(searchTerm.toLowerCase())
-                  )
-                  .map((product) => (
-                    <tr key={product.id} className="text-center">
-                      <td>{product.id}</td>
-                      <td>{product.code}</td>
-                      <td>{product.name}</td>
-                      <td>{product.price}</td>
-                      <td>{product.sold}</td>
-                      <td>{product.stock}</td>
-                      <td className="d-flex justify-content-around">
-                        <Button
-                          variant="warning"
-                          className="px-4"
-                          onClick={() => handleEdit(product)}
-                        >
-                          Sửa
-                        </Button>
-                        <Button
-                          variant="danger"
-                          className="px-4"
-                          onClick={() => handleDelete(product)}
-                        >
-                          Xóa
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                {displayedBooks.map((product, index) => (
+                  <tr key={product.id} className="text-center">
+                    <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
+                    <td>{product.code}</td>
+                    <td>{product.bookName}</td>
+                    <td>{product.price.$numberDecimal}$</td>
+                    <td>{product.sold}</td>
+                    <td>{product.stock}</td>
+                    <td className="d-flex justify-content-around">
+                      <Button variant="warning" className="px-4" onClick={() => handleEdit(product)}>Sửa</Button>
+                      <Button variant="danger" className="px-4" onClick={() => handleDelete(product)}>Xóa</Button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </Table>
+
+            {/* Pagination Controls */}
+            <div className="d-flex justify-content-center mt-3">
+              <Button variant="secondary" onClick={() => setCurPage((prev) => Math.max(prev - 1, 1))} disabled={curPage === 1}>
+                Trang trước
+              </Button>
+              <span className="mx-3">Trang {curPage} / {totalPages}</span>
+              <Button variant="secondary" onClick={() => setCurPage((prev) => Math.min(prev + 1, totalPages))} disabled={curPage === totalPages}>
+                Trang sau
+              </Button>
+            </div>
           </Card.Body>
         </Card>
       </Container>
-      <EditListProduct
-        show={showEditModal}
-        handleClose={handleCloseEdit}
-        book={selectedBook}
-      />
-      <DeleteListProduct
-        show={showDeleteModal}
-        handleClose={handleCloseDelete}
-        book={selectedBook}
-      />
+
+      <EditListProduct show={showEditModal} handleClose={handleCloseEdit} book={selectedBook} />
+      <DeleteListProduct show={showDeleteModal} handleClose={handleCloseDelete} book={selectedBook} />
       <AddListProduct show={showAddModal} handleClose={handleCloseAdd} />
     </div>
   );
