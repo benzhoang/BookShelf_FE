@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsSearch } from "react-icons/bs";
 import { Table, Form, Container, Button, Card } from "react-bootstrap";
 import DeleteAccount from "../ModalAccountList/DeleteAccount";
 import AddAccount from "../ModalAccountList/AddAccount";
 import EditAccount from "../ModalAccountList/EditAccount";
+import { bookServ } from "../../service/appService";
+import { useNavigate } from "react-router-dom";
+
+const ITEMS_PER_PAGE = 5; // Mỗi trang hiển thị 5 dòng
 
 const AccountList = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,51 +15,38 @@ const AccountList = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [userData, setUserData] = useState([]);
+  const [curPage, setCurPage] = useState(1);
+  const navigate =useNavigate();
 
-  const accounts = [
-    {
-      id: 1,
-      accountName: "lehaiha",
-      email: "haiha@gmail.com",
-      password: "123",
-      phoneNumber: "0333915630",
-    },
-    {
-      id: 2,
-      accountName: "lehaiha",
-      email: "haiha@gmail.com",
-      password: "123",
-      phoneNumber: "0333915630",
-    },
-    {
-      id: 3,
-      accountName: "lehaiha",
-      email: "haiha@gmail.com",
-      password: "123",
-      phoneNumber: "0333915630",
-    },
-    {
-      id: 4,
-      accountName: "lehaiha",
-      email: "haiha@gmail.com",
-      password: "123",
-      phoneNumber: "0333915630",
-    },
-    {
-      id: 5,
-      accountName: "lehaiha",
-      email: "haiha@gmail.com",
-      password: "123",
-      phoneNumber: "0333915630",
-    },
-    {
-      id: 6,
-      accountName: "lehaiha",
-      email: "haiha@gmail.com",
-      password: "123",
-      phoneNumber: "0333915630",
-    },
-  ];
+  useEffect(() => {
+    bookServ
+      .getAllUser()
+      .then((res) => {
+        setUserData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  // Tính tổng số trang
+  const totalPages = Math.ceil(userData.length / ITEMS_PER_PAGE);
+
+  // Lọc dữ liệu hiển thị theo trang
+  const displayedUsers = userData.slice(
+    (curPage - 1) * ITEMS_PER_PAGE,
+    curPage * ITEMS_PER_PAGE
+  );
+
+  // Xử lý chuyển trang
+  const handleNextPage = () => {
+    if (curPage < totalPages) setCurPage(curPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (curPage > 1) setCurPage(curPage - 1);
+  };
 
   const handleEdit = (order) => {
     setSelectedOrder(order);
@@ -72,7 +63,7 @@ const AccountList = () => {
   };
 
   return (
-    <div style={{ backgroundColor: "#D3D3D3" , height: '100vh'}}>
+    <div style={{ backgroundColor: "#D3D3D3", height: "100vh" }}>
       <Container fluid className="p-5">
         <Card>
           <Card.Header className="bg-success text-white">
@@ -98,11 +89,7 @@ const AccountList = () => {
                 />
               </div>
               <div>
-                <Button
-                  variant="info"
-                  className="px-4 ms-2"
-                  onClick={handleAdd}
-                >
+                <Button variant="info" className="px-4 ms-2" onClick={handleAdd}>
                   Thêm
                 </Button>
               </div>
@@ -111,49 +98,56 @@ const AccountList = () => {
             <Table striped bordered hover>
               <thead>
                 <tr className="text-center">
-                  <th>ID</th>
+                  <th>STT</th>
                   <th>Tên Tài Khoản</th>
                   <th>Email</th>
-                  <th>PhoneNumber</th>
+                  <th>Role</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {accounts
-                  .filter((account) =>
-                    account.accountName
-                      .toLowerCase()
-                      .includes(searchTerm.toLowerCase())
-                  )
-                  .map((account) => (
-                    <tr key={account.id} className="text-center">
-                      <td>{account.id}</td>
-                      <td>{account.accountName}</td>
-                      <td>{account.email}</td>
-                      <td>{account.phoneNumber}</td>
-                      <td className="d-flex justify-content-around">
-                        <Button
-                          variant="warning"
-                          style={{ width: "93px", padding: "10px" }}
-                          onClick={() => handleEdit(account)}
-                        >
-                          Sửa
-                        </Button>
-                        <Button
-                          style={{ width: "93px", padding: "10px" }}
-                          variant="danger"
-                          onClick={() => handleDelete(account)}
-                        >
-                          Xóa
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                {displayedUsers.map((account, index) => (
+                  <tr key={account.id} className="text-center">
+                    <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td> {/* STT tăng dần */}
+                    <td>{account.userName}</td>
+                    <td>{account.email}</td>
+                    <td>{account.role}</td>
+                    <td className="d-flex justify-content-around">
+                      <Button
+                        variant="warning"
+                        style={{ width: "93px", padding: "10px" }}
+                        onClick={() => handleEdit(account)}
+                      >
+                        Sửa
+                      </Button>
+                      <Button
+                        style={{ width: "93px", padding: "10px" }}
+                        variant="danger"
+                        onClick={() => handleDelete(account)}
+                      >
+                        Xóa
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </Table>
+
+            {/* Pagination Controls */}
+            <div className="d-flex justify-content-between mt-3">
+              <Button variant="primary" onClick={handlePrevPage} disabled={curPage === 1}>
+                ← Previous
+              </Button>
+              <span>Trang {curPage} / {totalPages}</span>
+              <Button variant="primary" onClick={handleNextPage} disabled={curPage === totalPages}>
+                Next →
+              </Button>
+            </div>
           </Card.Body>
         </Card>
       </Container>
+
+      {/* Modals */}
       <EditAccount
         show={showEditModal}
         handleClose={() => setShowEditModal(false)}
@@ -164,10 +158,7 @@ const AccountList = () => {
         handleClose={() => setShowDeleteModal(false)}
         account={selectedOrder}
       />
-      <AddAccount
-        show={showAddModal}
-        handleClose={() => setShowAddModal(false)}
-      />
+      <AddAccount show={showAddModal} handleClose={() => setShowAddModal(false)} />
     </div>
   );
 };

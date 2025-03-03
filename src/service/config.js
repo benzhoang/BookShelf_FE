@@ -4,18 +4,15 @@ import { localUserServ } from "./localService";
 
 export const BASE_URL="https://bookshelf-be.onrender.com";
 
-const TokenCyberSoft = "";
-
-
 export const configHeader = () => {
-    return{
-        TokenCyberSoft: TokenCyberSoft,
-        Authorization: "bearer" + localUserServ.get()?.accessToken,
-        // ? là optional chaining
-    }   
-}
+    const accessToken = localUserServ.getAccessToken();
+    console.log("Access Token:", accessToken); // In ra Access Token
+    return {
+        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+        "Content-Type": "application/json",
+    };
+};
 
-export const https=axios.create({
+export const https = axios.create({
     baseURL: BASE_URL,
-    headers: configHeader(),
 })

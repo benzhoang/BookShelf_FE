@@ -1,22 +1,20 @@
 import axios from "axios"
-import { BASE_URL, configHeader } from "./config"
+import { BASE_URL } from "./config"
 
 export const userServ={
-    postLogin :(loginForm)=>{
-        console.log(loginForm)
-        return axios({
-            url: `${BASE_URL}/api/auth/login`,
-            method: "POST",
-            headers: configHeader(),
-            data: loginForm,
-        })
+    postLogin: (loginForm) => {
+        return axios.post(`${BASE_URL}/api/auth/login`, loginForm, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
     },
-    postSignUp :(signUpForm)=>{
-        return axios({
-            url: `${BASE_URL}/api/QuanLyNguoiDung/DangKy`,
-            method: "POST",
-            headers: configHeader(),
-            data: signUpForm,
-        })
+
+    postSignUp: (signUpForm) => {
+        return axios.post(`${BASE_URL}/api/auth/register`, signUpForm, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
     }
 }
