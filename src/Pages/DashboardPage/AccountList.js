@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BsSearch } from "react-icons/bs";
-import { Table, Form, Container, Button, Card } from "react-bootstrap";
+import { Table, Form, Container, Button, Card, Spinner } from "react-bootstrap";
 import DeleteAccount from "../ModalAccountList/DeleteAccount";
 import AddAccount from "../ModalAccountList/AddAccount";
 import EditAccount from "../ModalAccountList/EditAccount";
@@ -17,16 +17,19 @@ const AccountList = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [userData, setUserData] = useState([]);
   const [curPage, setCurPage] = useState(1);
-  const navigate =useNavigate();
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     bookServ
       .getAllUser()
       .then((res) => {
         setUserData(res.data);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
       });
   }, []);
 
@@ -70,79 +73,107 @@ const AccountList = () => {
             DANH SÁCH TÀI KHOẢN
           </Card.Header>
           <Card.Body>
-            <Form className="mb-3 d-flex align-items-center justify-content-between">
-              <div className="position-relative w-25">
-                <Form.Control
-                  type="text"
-                  placeholder="Tìm kiếm mã đơn hàng..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="ps-5"
-                />
-                <BsSearch
-                  className="position-absolute "
-                  style={{
-                    top: "50%",
-                    left: "10px",
-                    transform: "translateY(-50%)",
-                  }}
-                />
+            {loading ? (
+              // Hiển thị spinner khi đang tải dữ liệu
+              <div
+                className="d-flex justify-content-center align-items-center "
+                style={{ height: "300px" }}
+              >
+                <Spinner animation="border" variant="primary" />
+                <span className="ms-2">Đang tải dữ liệu...</span>
               </div>
-              <div>
-                <Button variant="info" className="px-4 ms-2" onClick={handleAdd}>
-                  Thêm
-                </Button>
-              </div>
-            </Form>
+            ) : (
+              <>
+                <Form className="mb-3 d-flex align-items-center justify-content-between">
+                  <div className="position-relative w-25">
+                    <Form.Control
+                      type="text"
+                      placeholder="Tìm kiếm mã đơn hàng..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="ps-5"
+                    />
+                    <BsSearch
+                      className="position-absolute "
+                      style={{
+                        top: "50%",
+                        left: "10px",
+                        transform: "translateY(-50%)",
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <Button
+                      variant="info"
+                      className="px-4 ms-2"
+                      onClick={handleAdd}
+                    >
+                      Thêm
+                    </Button>
+                  </div>
+                </Form>
 
-            <Table striped bordered hover>
-              <thead>
-                <tr className="text-center">
-                  <th>STT</th>
-                  <th>Tên Tài Khoản</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayedUsers.map((account, index) => (
-                  <tr key={account.id} className="text-center">
-                    <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td> {/* STT tăng dần */}
-                    <td>{account.userName}</td>
-                    <td>{account.email}</td>
-                    <td>{account.role}</td>
-                    <td className="d-flex justify-content-around">
-                      <Button
-                        variant="warning"
-                        style={{ width: "93px", padding: "10px" }}
-                        onClick={() => handleEdit(account)}
-                      >
-                        Sửa
-                      </Button>
-                      <Button
-                        style={{ width: "93px", padding: "10px" }}
-                        variant="danger"
-                        onClick={() => handleDelete(account)}
-                      >
-                        Xóa
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+                <Table striped bordered hover>
+                  <thead>
+                    <tr className="text-center">
+                      <th>STT</th>
+                      <th>Tên Tài Khoản</th>
+                      <th>Email</th>
+                      <th>Role</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {displayedUsers.map((account, index) => (
+                      <tr key={account.id} className="text-center">
+                        <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>{" "}
+                        {/* STT tăng dần */}
+                        <td>{account.userName}</td>
+                        <td>{account.email}</td>
+                        <td>{account.role}</td>
+                        <td className="d-flex justify-content-around">
+                          <Button
+                            variant="warning"
+                            style={{ width: "93px", padding: "10px" }}
+                            onClick={() => handleEdit(account)}
+                          >
+                            Sửa
+                          </Button>
+                          <Button
+                            style={{ width: "93px", padding: "10px" }}
+                            variant="danger"
+                            onClick={() => handleDelete(account)}
+                          >
+                            Xóa
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
 
-            {/* Pagination Controls */}
-            <div className="d-flex justify-content-between mt-3">
-              <Button variant="primary" onClick={handlePrevPage} disabled={curPage === 1}>
-                ← Previous
-              </Button>
-              <span>Trang {curPage} / {totalPages}</span>
-              <Button variant="primary" onClick={handleNextPage} disabled={curPage === totalPages}>
-                Next →
-              </Button>
-            </div>
+                {/* Pagination Controls */}
+                <div className="d-flex justify-content-between mt-3">
+                  <Button
+                    variant="primary"
+                    onClick={handlePrevPage}
+                    disabled={curPage === 1}
+                  >
+                    ← Previous
+                  </Button>
+                  <span>
+                    Trang {curPage} / {totalPages}
+                  </span>
+                  <Button
+                    variant="primary"
+                    onClick={handleNextPage}
+                    disabled={curPage === totalPages}
+                  >
+                    Next →
+                  </Button>
+                </div>
+              </>
+            )}
           </Card.Body>
         </Card>
       </Container>
@@ -158,7 +189,10 @@ const AccountList = () => {
         handleClose={() => setShowDeleteModal(false)}
         account={selectedOrder}
       />
-      <AddAccount show={showAddModal} handleClose={() => setShowAddModal(false)} />
+      <AddAccount
+        show={showAddModal}
+        handleClose={() => setShowAddModal(false)}
+      />
     </div>
   );
 };

@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { signInWithGoogle } from "../../contexts/auth";
 import { userServ } from "../../service/userServie";
 import { localUserServ } from "../../service/localService";
-import { setLoginAction, setLoginActionService } from "../../redux/action/userAction";
+import {
+  setLoginAction,
+  setLoginActionService,
+} from "../../redux/action/userAction";
 import { useDispatch } from "react-redux";
 import { notification } from "antd";
-
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -32,15 +34,14 @@ export default function LoginPage() {
       email: username,
       password: password,
     };
-    console.log(loginForm)
+    console.log(loginForm);
     userServ
       .postLogin(loginForm)
       .then((res) => {
-        localUserServ.set(res.data)
+        localUserServ.set(res.data);
         dispatch(setLoginAction(res.data));
         navigate("/product");
-        window.location.reload()
-        
+        window.location.reload();
       })
       .catch((err) => {
         console.log(err);
@@ -49,53 +50,36 @@ export default function LoginPage() {
 
   const handleSignUp = () => {
     const processedUsername = username.replace("@gmail.com", "");
-    if(!password && !username && !repassword ){
-      openNotification(
-        "error",
-        "Lỗi",
-        "vui lòng nhập đầy đủ thông tin"
-      );
+    if (!password && !username && !repassword) {
+      openNotification("error", "Lỗi", "vui lòng nhập đầy đủ thông tin");
       return;
     }
-    if(password !== repassword){
-      openNotification(
-        "error",
-        "Lỗi",
-        "mật khẩu không trùng khớp"
-      );
-    }else{
+    if (password !== repassword) {
+      openNotification("error", "Lỗi", "mật khẩu không trùng khớp");
+    } else {
       const loginForm = {
         userName: processedUsername,
         email: username,
         password: password,
-        role: 'Staff'
+        role: "Staff",
       };
-      userServ.postSignUp(loginForm)
-        .then((res) =>{
-          console.log(res)
+      userServ
+        .postSignUp(loginForm)
+        .then((res) => {
+          console.log(res);
           setTimeout(() => {
-            openNotification(
-              "success",
-              "Thành công",
-              "Đăng ký thành công"
-            );
+            openNotification("success", "Thành công", "Đăng ký thành công");
           }, 500);
           setTimeout(() => {
-            window.location.reload()
+            window.location.reload();
           }, 1000);
         })
-        .catch((err) =>{
-          console.log(err)
-          openNotification(
-            "error",
-            "Lỗi",
-            err.response.data.message
-          );
-        })
-      console.log(loginForm)
+        .catch((err) => {
+          console.log(err);
+          openNotification("error", "Lỗi", err.response.data.message);
+        });
+      console.log(loginForm);
     }
-    
-    
   };
 
   const handleSignIn = async () => {
@@ -145,7 +129,9 @@ export default function LoginPage() {
             />
           </div>
 
-          <div style={{ marginBottom: "5%", position: "relative", width: "70%" }}>
+          <div
+            style={{ marginBottom: "5%", position: "relative", width: "70%" }}
+          >
             <input
               onChange={(e) => setPassword(e.target.value)}
               value={password}
@@ -169,12 +155,20 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div style={{ fontSize: "12px", width: "70%" }} className="text-center text-sm text-gray-500 mb-4">
+          <div
+            style={{ fontSize: "12px", width: "70%" }}
+            className="text-center text-sm text-gray-500 mb-4"
+          >
             By logging in or continuing with Google, you agree to our{" "}
-            <span className="font-semibold">Terms and Conditions</span> and <span className="font-semibold">Privacy Policy</span>.
+            <span className="font-semibold">Terms and Conditions</span> and{" "}
+            <span className="font-semibold">Privacy Policy</span>.
           </div>
 
-          <button onClick={handleLogin} style={{ width: "70%" }} className="w-full bg-black text-white py-2 rounded mb-4">
+          <button
+            onClick={handleLogin}
+            style={{ width: "70%" }}
+            className="w-full bg-black text-white py-2 rounded mb-4"
+          >
             Login
           </button>
 
@@ -185,23 +179,31 @@ export default function LoginPage() {
             style={{
               border: "none",
               width: "70%",
-              textAlign: "left",
               borderRadius: "10px",
               color: "white",
               background: "#BEB9B9",
               fontSize: "16px",
-              padding: "10px 0 5px 10px",
+              padding: "5px 0 5px 10px",
               display: "flex",
               alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <img style={{ width: "10%", marginRight: "10px" }} src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
+            <img
+              style={{ width: "10%", marginRight: "10px", borderRadius: "10%" }}
+              src="https://developers.google.com/identity/images/g-logo.png"
+              alt="Google"
+            />
             SIGN IN WITH GOOGLE
           </button>
 
           <p className="text-center text-sm mt-4">
             Don't have an account?{" "}
-            <span style={{ cursor: "pointer", color: "blue" }} onClick={() => setSignForm(true)} className="font-semibold">
+            <span
+              style={{ cursor: "pointer", color: "blue" }}
+              onClick={() => setSignForm(true)}
+              className="font-semibold"
+            >
               Sign up
             </span>
           </p>
@@ -234,7 +236,9 @@ export default function LoginPage() {
             />
           </div>
 
-          <div style={{ marginBottom: "5%", position: "relative", width: "100%" }}>
+          <div
+            style={{ marginBottom: "5%", position: "relative", width: "100%" }}
+          >
             <input
               onChange={(e) => setPassword(e.target.value)}
               value={password}
@@ -258,7 +262,9 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div style={{ marginBottom: "5%", position: "relative", width: "100%" }}>
+          <div
+            style={{ marginBottom: "5%", position: "relative", width: "100%" }}
+          >
             <input
               onChange={(e) => setRepassword(e.target.value)}
               value={repassword}
@@ -282,7 +288,11 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <button onClick={handleSignUp} style={{ width: "100%" }} className="w-full bg-black text-white py-2 rounded mb-4">
+          <button
+            onClick={handleSignUp}
+            style={{ width: "100%" }}
+            className="w-full bg-black text-white py-2 rounded mb-4"
+          >
             Sign Up
           </button>
 
@@ -298,18 +308,32 @@ export default function LoginPage() {
               color: "white",
               background: "#BEB9B9",
               fontSize: "16px",
-              padding: "10px 0 5px 10px",
+              padding: "5px 30px 5px 30px",
               display: "flex",
               alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <img style={{ width: "10%", marginRight: "10px" }} src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
+            <img
+              style={{
+                width: "13%",
+                borderRadius: "10%",
+
+                marginRight: "10px",
+              }}
+              src="https://developers.google.com/identity/images/g-logo.png"
+              alt="Google"
+            />
             SIGN IN WITH GOOGLE
           </button>
 
           <p className="text-center text-sm mt-4">
             Already have an account?{" "}
-            <span style={{ cursor: "pointer", color: "blue" }} onClick={() => setSignForm(false)} className="font-semibold">
+            <span
+              style={{ cursor: "pointer", color: "blue" }}
+              onClick={() => setSignForm(false)}
+              className="font-semibold"
+            >
               Login
             </span>
           </p>

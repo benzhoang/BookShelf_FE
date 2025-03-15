@@ -67,7 +67,7 @@ const OrderList = () => {
   };
 
   return (
-    <div style={{ backgroundColor: "#D3D3D3" , height: '100vh'}}>
+    <div style={{ backgroundColor: "#D3D3D3", height: "100vh" }}>
       <Container fluid className="p-5">
         <Card>
           <Card.Header className="bg-success text-white">
