@@ -5,7 +5,6 @@ import DeleteAccount from "../ModalAccountList/DeleteAccount";
 import AddAccount from "../ModalAccountList/AddAccount";
 import EditAccount from "../ModalAccountList/EditAccount";
 import { bookServ } from "../../service/appService";
-import { useNavigate } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 5; // Mỗi trang hiển thị 5 dòng
 
@@ -17,7 +16,6 @@ const AccountList = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [userData, setUserData] = useState([]);
   const [curPage, setCurPage] = useState(1);
-  const navigate =useNavigate();
 
   useEffect(() => {
     bookServ
@@ -89,7 +87,11 @@ const AccountList = () => {
                 />
               </div>
               <div>
-                <Button variant="info" className="px-4 ms-2" onClick={handleAdd}>
+                <Button
+                  variant="info"
+                  className="px-4 ms-2"
+                  onClick={handleAdd}
+                >
                   Thêm
                 </Button>
               </div>
@@ -108,7 +110,8 @@ const AccountList = () => {
               <tbody>
                 {displayedUsers.map((account, index) => (
                   <tr key={account.id} className="text-center">
-                    <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td> {/* STT tăng dần */}
+                    <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>{" "}
+                    {/* STT tăng dần */}
                     <td>{account.userName}</td>
                     <td>{account.email}</td>
                     <td>{account.role}</td>
@@ -135,11 +138,21 @@ const AccountList = () => {
 
             {/* Pagination Controls */}
             <div className="d-flex justify-content-between mt-3">
-              <Button variant="primary" onClick={handlePrevPage} disabled={curPage === 1}>
+              <Button
+                variant="primary"
+                onClick={handlePrevPage}
+                disabled={curPage === 1}
+              >
                 ← Previous
               </Button>
-              <span>Trang {curPage} / {totalPages}</span>
-              <Button variant="primary" onClick={handleNextPage} disabled={curPage === totalPages}>
+              <span>
+                Trang {curPage} / {totalPages}
+              </span>
+              <Button
+                variant="primary"
+                onClick={handleNextPage}
+                disabled={curPage === totalPages}
+              >
                 Next →
               </Button>
             </div>
@@ -158,7 +171,10 @@ const AccountList = () => {
         handleClose={() => setShowDeleteModal(false)}
         account={selectedOrder}
       />
-      <AddAccount show={showAddModal} handleClose={() => setShowAddModal(false)} />
+      <AddAccount
+        show={showAddModal}
+        handleClose={() => setShowAddModal(false)}
+      />
     </div>
   );
 };
