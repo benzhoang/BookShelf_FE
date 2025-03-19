@@ -89,10 +89,8 @@ const ProductList = () => {
               <thead>
                 <tr className="text-center">
                   <th>STT</th>
-                  <th>Mã Sách</th>
                   <th>Tên Sách</th>
                   <th>Giá Bán</th>
-                  <th>Đã Bán</th>
                   <th>Tồn kho</th>
                   <th>Action</th>
                 </tr>
@@ -101,11 +99,9 @@ const ProductList = () => {
                 {displayedBooks.map((product, index) => (
                   <tr key={product.id} className="text-center">
                     <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
-                    <td>{product.code}</td>
                     <td>{product.bookName}</td>
                     <td>{product.price.$numberDecimal}$</td>
-                    <td>{product.sold}</td>
-                    <td>{product.stock}</td>
+                    <td>{product.quantity}</td>
                     <td className="d-flex justify-content-around">
                       <Button variant="warning" className="px-4" onClick={() => handleEdit(product)}>Sửa</Button>
                       <Button variant="danger" className="px-4" onClick={() => handleDelete(product)}>Xóa</Button>
