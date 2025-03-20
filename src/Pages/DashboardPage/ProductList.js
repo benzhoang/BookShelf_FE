@@ -2,7 +2,15 @@ import React, { useState, useEffect } from "react";
 import { BsSearch } from "react-icons/bs";
 import { HiOutlineShoppingBag } from "react-icons/hi";
 import EditListProduct from "../ModalListProduct/EditListProduct";
-import { Table, Form, Container, Row, Col, Button, Card } from "react-bootstrap";
+import {
+  Table,
+  Form,
+  Container,
+  Row,
+  Col,
+  Button,
+  Card,
+} from "react-bootstrap";
 import { FaBoxOpen } from "react-icons/fa";
 import DeleteListProduct from "../ModalListProduct/DeleteListProduct";
 import AddListProduct from "../ModalListProduct/AddListProduct";
@@ -20,7 +28,8 @@ const ProductList = () => {
   const [curPage, setCurPage] = useState(1);
 
   useEffect(() => {
-    bookServ.getBook()
+    bookServ
+      .getBook()
       .then((res) => setDataBook(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -29,7 +38,7 @@ const ProductList = () => {
     setSelectedBook(book);
     setShowEditModal(true);
   };
-  
+
   const handleDelete = (book) => {
     setSelectedBook(book);
     setShowDeleteModal(true);
@@ -42,11 +51,14 @@ const ProductList = () => {
 
   // Pagination
   const totalPages = Math.ceil(dataBook.length / ITEMS_PER_PAGE);
-  const displayedBooks = dataBook.slice((curPage - 1) * ITEMS_PER_PAGE, curPage * ITEMS_PER_PAGE);
+  const displayedBooks = dataBook.slice(
+    (curPage - 1) * ITEMS_PER_PAGE,
+    curPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div style={{ backgroundColor: "#D3D3D3" }}>
-      <Container style={{ height: '100vh', padding: '2%'}}>
+      <Container style={{ height: "100vh", padding: "2%" }}>
         <Row className="mb-2 d-flex justify-content-between">
           <Col md={5}>
             <Card className="p-4 rounded-5 d-flex flex-row justify-content-between align-items-center">
@@ -58,7 +70,7 @@ const ProductList = () => {
             </Card>
           </Col>
           <Col md={5}>
-            <Card className="p-3 rounded-5 d-flex flex-row justify-content-between align-items-center">
+            <Card className="p-4 rounded-5 d-flex flex-row justify-content-between align-items-center">
               <Card.Body>
                 <Card.Title>TỔNG TỒN KHO</Card.Title>
                 <Card.Text>522 ~ $560.25K</Card.Text>
@@ -69,7 +81,9 @@ const ProductList = () => {
         </Row>
 
         <Card>
-          <Card.Header className="bg-success text-white">DANH SÁCH SẢN PHẨM</Card.Header>
+          <Card.Header className="bg-success text-white">
+            DANH SÁCH SẢN PHẨM
+          </Card.Header>
           <Card.Body>
             <Form className="mb-3 d-flex align-items-center justify-content-between">
               <div className="position-relative w-25">
@@ -80,9 +94,18 @@ const ProductList = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="ps-5"
                 />
-                <BsSearch className="position-absolute " style={{ top: "50%", left: "10px", transform: "translateY(-50%)" }} />
+                <BsSearch
+                  className="position-absolute "
+                  style={{
+                    top: "50%",
+                    left: "10px",
+                    transform: "translateY(-50%)",
+                  }}
+                />
               </div>
-              <Button variant="info" className="px-4 ms-2" onClick={handleAdd}>Thêm</Button>
+              <Button variant="info" className="px-4 ms-2" onClick={handleAdd}>
+                Thêm
+              </Button>
             </Form>
 
             <Table striped bordered hover>
@@ -92,6 +115,7 @@ const ProductList = () => {
                   <th>Tên Sách</th>
                   <th>Giá Bán</th>
                   <th>Tồn kho</th>
+                  <th>Đã bán</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -102,9 +126,22 @@ const ProductList = () => {
                     <td>{product.bookName}</td>
                     <td>{product.price.$numberDecimal}$</td>
                     <td>{product.quantity}</td>
+                    <td>{product.soldQuantity}</td>
                     <td className="d-flex justify-content-around">
-                      <Button variant="warning" className="px-4" onClick={() => handleEdit(product)}>Sửa</Button>
-                      <Button variant="danger" className="px-4" onClick={() => handleDelete(product)}>Xóa</Button>
+                      <Button
+                        variant="warning"
+                        className="px-4"
+                        onClick={() => handleEdit(product)}
+                      >
+                        Sửa
+                      </Button>
+                      <Button
+                        variant="danger"
+                        className="px-4"
+                        onClick={() => handleDelete(product)}
+                      >
+                        Xóa
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -113,11 +150,23 @@ const ProductList = () => {
 
             {/* Pagination Controls */}
             <div className="d-flex justify-content-center mt-3">
-              <Button variant="secondary" onClick={() => setCurPage((prev) => Math.max(prev - 1, 1))} disabled={curPage === 1}>
+              <Button
+                variant="secondary"
+                onClick={() => setCurPage((prev) => Math.max(prev - 1, 1))}
+                disabled={curPage === 1}
+              >
                 Trang trước
               </Button>
-              <span className="mx-3">Trang {curPage} / {totalPages}</span>
-              <Button variant="secondary" onClick={() => setCurPage((prev) => Math.min(prev + 1, totalPages))} disabled={curPage === totalPages}>
+              <span className="mx-3">
+                Trang {curPage} / {totalPages}
+              </span>
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  setCurPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={curPage === totalPages}
+              >
                 Trang sau
               </Button>
             </div>
@@ -125,8 +174,16 @@ const ProductList = () => {
         </Card>
       </Container>
 
-      <EditListProduct show={showEditModal} handleClose={handleCloseEdit} book={selectedBook} />
-      <DeleteListProduct show={showDeleteModal} handleClose={handleCloseDelete} book={selectedBook} />
+      <EditListProduct
+        show={showEditModal}
+        handleClose={handleCloseEdit}
+        book={selectedBook}
+      />
+      <DeleteListProduct
+        show={showDeleteModal}
+        handleClose={handleCloseDelete}
+        book={selectedBook}
+      />
       <AddListProduct show={showAddModal} handleClose={handleCloseAdd} />
     </div>
   );
