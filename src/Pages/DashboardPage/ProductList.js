@@ -26,18 +26,43 @@ const ProductList = () => {
   const [selectedBook, setSelectedBook] = useState(null);
   const [dataBook, setDataBook] = useState([]);
   const [curPage, setCurPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [quan, setQuan] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalPriceSel, setTotalPriceSel] = useState(0);
+
 
   useEffect(() => {
     bookServ
       .getBook()
-      .then((res) => setDataBook(res.data))
+      .then((res) => {
+        setDataBook(res.data);
+        const totalSold = res.data.reduce((sum, book) => sum + (book.soldQuantity || 0), 0);
+        const totalQuan = res.data.reduce((sum, book) => sum + (book.quantity || 0), 0);
+        const totalPriceValue = res.data.reduce((sum, book) => {
+          const price = parseFloat(book.price?.$numberDecimal || 0);
+          return sum + (book.quantity * price);
+        }, 0);
+        const totalPriceSell = res.data.reduce((sum, book) => {
+          const price = parseFloat(book.price?.$numberDecimal || 0);
+          return sum + (book.soldQuantity * price);
+        }, 0);
+        setTotal(totalSold);
+        setQuan(totalQuan);
+        setTotalPrice(Math.round(totalPriceValue));
+        setTotalPriceSel(Math.round(totalPriceSell));
+      })
       .catch((err) => console.log(err));
   }, []);
+
+  console.log(total, quan)
 
   const handleEdit = (book) => {
     setSelectedBook(book);
     setShowEditModal(true);
   };
+
+  
 
   const handleDelete = (book) => {
     setSelectedBook(book);
@@ -64,7 +89,7 @@ const ProductList = () => {
             <Card className="p-4 rounded-5 d-flex flex-row justify-content-between align-items-center">
               <Card.Body>
                 <Card.Title>TỔNG ĐÃ BÁN</Card.Title>
-                <Card.Text>200 ~ $860.25K</Card.Text>
+                <Card.Text>{total} ~ ${totalPriceSel}K</Card.Text>
               </Card.Body>
               <HiOutlineShoppingBag size={80} color="green" />
             </Card>
@@ -73,7 +98,7 @@ const ProductList = () => {
             <Card className="p-4 rounded-5 d-flex flex-row justify-content-between align-items-center">
               <Card.Body>
                 <Card.Title>TỔNG TỒN KHO</Card.Title>
-                <Card.Text>522 ~ $560.25K</Card.Text>
+                <Card.Text>{quan} ~ ${totalPrice}k</Card.Text>
               </Card.Body>
               <FaBoxOpen size={80} color="goldenrod" />
             </Card>

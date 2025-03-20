@@ -42,4 +42,40 @@ export const bookServ={
     postImg: () =>{
         return https.post("/api/uploadImg", { headers: configHeader() });
     },
+    postActor: (dataForm) => {
+        console.log(dataForm)
+        return https.post("/api/actors", dataForm,{ headers: configHeader() });
+    },
+    deleteActor: (id) => {
+        console.log(id)
+        return https.delete(`/api/actors/${id}`,{ headers: configHeader() });
+    },
+    updateActor: (id, data) =>{
+        console.log(id,data)
+        return https.put(`/api/actors/${id}`, data, { headers: configHeader() });
+    },
+    postCate: (dataForm) => {
+        console.log(dataForm)
+        return https.post("/api/categories", dataForm,{ headers: configHeader() });
+    },
+    deleteCate: (id) => {
+        console.log(id)
+        return https.delete(`/api/categories/${id}`,{ headers: configHeader() });
+    },
+    updateCate: (id, data) =>{
+        console.log(id,data)
+        return https.put(`/api/categories/${id}`, data, { headers: configHeader() });
+    },
+    postOrigin: (dataForm) => {
+        console.log(dataForm)
+        return https.post("/api/bookmedias", dataForm,{ headers: configHeader() });
+    },
+    deleteOrigin: (id) => {
+        console.log(id)
+        return https.delete(`/api/bookmedias/${id}`,{ headers: configHeader() });
+    },
+    updateOrigin: (id, data) =>{
+        console.log(id,data)
+        return https.put(`/api/bookmedias/${id}`, data, { headers: configHeader() });
+    },
 }
