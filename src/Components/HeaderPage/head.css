@@ -1,3 +1,112 @@
-.active{
-    color: green;
+/* Main sidebar styling */
+.sidebar {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  width: 310px;
+  height: 100vh;
+  padding: 20px 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header title */
+.sidebar-title {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  padding: 15px 0;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #34495e;
+  color: #3498db;
+}
+
+/* Category titles */
+.category-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #3498db;
+  padding: 10px 20px;
+  margin-top: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+/* Navigation lists */
+.nav-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
+  padding: 12px 20px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.nav-item:hover {
+  background-color: #34495e;
+}
+
+/* Submenu items */
+.submenu-item {
+  padding: 10px 15px 10px 40px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.submenu-item:hover {
+  background-color: #34495e;
+}
+
+/* Active item styling */
+.active {
+  background-color: #3498db;
+  color: white;
+  border-left: 4px solid #2980b9;
+}
+
+.active:hover {
+  background-color: #2980b9;
+}
+
+/* Account section at bottom */
+.account-section {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  padding: 10px 0;
+  border-top: 1px solid #34495e;
+}
+
+.user-info {
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logout button */
+.logout-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
 }
