@@ -16,6 +16,7 @@ import DeleteListProduct from "../ModalListProduct/DeleteListProduct";
 import AddListProduct from "../ModalListProduct/AddListProduct";
 import { bookServ } from "../../service/appService";
 import "./ProductList.css";
+import ProductDetailModal from "./ProductDetailModal";
 const ITEMS_PER_PAGE = 5;
 
 const ProductList = () => {
@@ -30,6 +31,8 @@ const ProductList = () => {
   const [quan, setQuan] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalPriceSel, setTotalPriceSel] = useState(0);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedDetailBook, setSelectedDetailBook] = useState(null);
 
   useEffect(() => {
     bookServ
@@ -70,6 +73,13 @@ const ProductList = () => {
     setShowDeleteModal(true);
   };
 
+
+  const handleShowDetail = (book) => {
+    setSelectedDetailBook(book);
+    setShowDetailModal(true);
+  };
+  
+  const handleCloseDetail = () => setShowDetailModal(false);
   const handleAdd = () => setShowAddModal(true);
   const handleCloseEdit = () => setShowEditModal(false);
   const handleCloseDelete = () => setShowDeleteModal(false);
@@ -155,11 +165,11 @@ const ProductList = () => {
                 <tbody>
                   {displayedBooks.map((product, index) => (
                     <tr key={product.id}>
-                      <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
-                      <td className="book-title">{product.bookName}</td>
-                      <td className="price">{product.price.$numberDecimal}$</td>
-                      <td>{product.quantity}</td>
-                      <td>{product.soldQuantity}</td>
+                      <td onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
+                      <td className="book-title" onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{product.bookName}</td>
+                      <td className="price" onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{product.price.$numberDecimal}$</td>
+                      <td onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{product.quantity}</td>
+                      <td onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{product.soldQuantity}</td>
                       <td>
                         <div className="action-buttons">
                           <Button
@@ -221,6 +231,13 @@ const ProductList = () => {
         book={selectedBook}
       />
       <AddListProduct show={showAddModal} handleClose={handleCloseAdd} />
+
+      <ProductDetailModal
+        show={showDetailModal}
+        handleClose={handleCloseDetail}
+        book={selectedDetailBook}
+      />
+
     </div>
   );
 };

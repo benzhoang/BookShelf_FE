@@ -66,9 +66,9 @@ const EditListProduct = ({ show, handleClose, book }) => {
         price: book.price?.$numberDecimal || "",
         description: book.description || "",
         quantity: book.quantity || "",
-        actor: book.actor.actorName || "",
-        bookMedia: book.bookMedia.origin || "",
-        category: book.category.categoryName || "",
+        actor: book.actor?.actorName || "",
+        bookMedia: book.bookMedia?.origin || "",
+        category: book.category?.categoryName || "",
       });
     }
   }, [book, actor, mediaOptions, cate]);
