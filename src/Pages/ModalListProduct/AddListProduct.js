@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Button, Row, Col } from "react-bootstrap";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import "./addListProduct.css";
 import { bookServ } from "../../service/appService";
 
 const AddListProduct = ({ show, handleClose }) => {
   const navigate = useNavigate();
   const [bookName, setBookName] = useState("");
-  const [price, setPrice] = useState(0);
-  const [quantity, setQuantity] = useState(1);
+  const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [description, setDescription] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [actorName, setActorName] = useState("");
   const [origin, setOrigin] = useState("");
-  const [image, setImage] = useState(null); // Lưu ảnh dưới dạng base64
+  const [imageUrl, setImageUrl] = useState("");
   const [cate, setCate] = useState([]);
   const [actor, setActor] = useState([]);
   const [origins, setOrigins] = useState([]);
-  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,27 +36,9 @@ const AddListProduct = ({ show, handleClose }) => {
     fetchData();
   }, []);
 
-  // Chuyển file ảnh thành base64
-  const onFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        setImage(reader.result); // Lưu ảnh dưới dạng base64
-      };
-    }
-  };
-
-  const onFinish = async (event) => {
+  const onFinish = (event) => {
     event.preventDefault();
-  
-    if (!bookName || !description || !categoryName || !actorName || !origin || !image) {
-      alert("Vui lòng điền đầy đủ thông tin và chọn ảnh!");
-      return;
-    }
-  
-    const data = {
+    const dataForm = {
       bookName,
       description,
       price: Number(price),
@@ -65,110 +46,175 @@ const AddListProduct = ({ show, handleClose }) => {
       categoryName,
       actorName,
       origin,
-      image, // Base64
+      imageUrl,
     };
-  
-    console.log("Data sent to API:", data);
-  
-    try {
-      setUploading(true);
-      const res = await bookServ.postBook(data); 
-      console.log("Response:", res.data);
-      window.location.reload();
-    } catch (err) {
-      console.error("Lỗi khi thêm sách:", err);
-      alert("Thêm sách thất bại! Vui lòng thử lại.");
-    } finally {
-      setUploading(false);
-    }
+
+
+    bookServ
+      .postBook(dataForm)
+      .then((res) => {
+        console.log(res.data);
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
-  
 
   return (
     <Modal show={show} onHide={handleClose} centered backdrop="static">
-      <Modal.Header closeButton style={{ backgroundColor: "#65c3a5" }}></Modal.Header>
+      <Modal.Header
+        closeButton
+        style={{ backgroundColor: "#65c3a5" }}
+      ></Modal.Header>
       <Modal.Body className="px-5">
         <h3 className="text-center text-white mb-4">Add Book</h3>
         <Form onSubmit={onFinish}>
           <Form.Group className="mb-4">
-            <Form.Control type="text" placeholder="Book Name *" value={bookName} onChange={(e) => setBookName(e.target.value)} required />
+            <Form.Control
+              type="text"
+              placeholder="Book Name"
+              value={bookName}
+              onChange={(e) => setBookName(e.target.value)}
+            />
           </Form.Group>
 
           <Form.Group className="mb-4">
-            <Form.Control type="number" placeholder="Price *" value={price} onChange={(e) => setPrice(e.target.value)} required />
+            <Form.Control
+              type="number"
+              placeholder="Price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
           </Form.Group>
 
           <Form.Group className="mb-4">
-            <Form.Control type="number" placeholder="Quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+            <Form.Control
+              type="number"
+              placeholder="Số lượng"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              required
+            />
           </Form.Group>
 
           <Form.Group className="mb-4">
-            <Form.Control as="textarea" rows={2} placeholder="Description *" value={description} onChange={(e) => setDescription(e.target.value)} required />
+            <Form.Control
+              as="textarea"
+              rows={2}
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
           </Form.Group>
 
+          {/* Select Category với nút View */}
           <Form.Group className="mb-4">
             <Row>
               <Col xs={9}>
-                <Form.Select value={categoryName} onChange={(e) => setCategoryName(e.target.value)} required>
-                  <option value="">Select Category *</option>
-                  {cate.map((item) => (
-                    <option key={item.id} value={item.categoryName}>
+                <Form.Select
+                  value={categoryName}
+                  onChange={(e) => setCategoryName(e.target.value)}
+                >
+                  <option value="">Select Category</option>
+                  {cate.map((item, index) => (
+                    <option
+                      key={`category-${item._id || index}`}
+                      value={item.categoryName}
+                    >
                       {item.categoryName}
                     </option>
                   ))}
                 </Form.Select>
               </Col>
               <Col xs={3}>
-                <Button variant="info" className="w-100" onClick={() => navigate("/categories")}>View</Button>
+                <Button
+                  variant="info"
+                  className="w-100"
+                  onClick={() => navigate("/categories")}
+                >
+                  View
+                </Button>
               </Col>
             </Row>
           </Form.Group>
 
+          {/* Select Actor với nút View */}
           <Form.Group className="mb-4">
             <Row>
               <Col xs={9}>
-                <Form.Select value={actorName} onChange={(e) => setActorName(e.target.value)} required>
-                  <option value="">Select Actor *</option>
-                  {actor.map((item) => (
-                    <option key={item.id} value={item.actorName}>
+                <Form.Select
+                  value={actorName}
+                  onChange={(e) => setActorName(e.target.value)}
+                >
+                  <option value="">Select Actor</option>
+                  {actor.map((item, index) => (
+                    <option
+                      key={`actor-${item._id || index}`}
+                      value={item.actorName}
+                    >
                       {item.actorName}
                     </option>
                   ))}
                 </Form.Select>
               </Col>
               <Col xs={3}>
-                <Button variant="info" className="w-100" onClick={() => navigate("/actors")}>View</Button>
+                <Button
+                  variant="info"
+                  className="w-100"
+                  onClick={() => navigate("/actors")}
+                >
+                  View
+                </Button>
               </Col>
             </Row>
           </Form.Group>
 
+          {/* Select Origin với nút View */}
           <Form.Group className="mb-4">
             <Row>
               <Col xs={9}>
-                <Form.Select value={origin} onChange={(e) => setOrigin(e.target.value)} required>
-                  <option value="">Select Origin *</option>
-                  {origins.map((item) => (
-                    <option key={item.id} value={item.origin}>
+                <Form.Select
+                  value={origin}
+                  onChange={(e) => setOrigin(e.target.value)}
+                >
+                  <option value="">Select Origin</option>
+                  {origins.map((item, index) => (
+                    <option
+                      key={`origin-${item._id || index}`}
+                      value={item.origin}
+                    >
                       {item.origin}
                     </option>
                   ))}
                 </Form.Select>
               </Col>
               <Col xs={3}>
-                <Button variant="info" className="w-100" onClick={() => navigate("/origins")}>View</Button>
+                <Button
+                  variant="info"
+                  className="w-100"
+                  onClick={() => navigate("/origins")}
+                >
+                  View
+                </Button>
               </Col>
             </Row>
           </Form.Group>
 
-          {/* Upload hình ảnh */}
+          {/* Simple Image URL input field */}
           <Form.Group className="mb-4">
-            <Form.Label className="text-white">Upload Image</Form.Label>
-            <Form.Control type="file" accept="image/*" onChange={onFileChange} />
+            <Form.Label className="text-white">Image URL</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Paste image URL here"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+            />
           </Form.Group>
 
           <hr className="border-white" />
-          <Button type="submit" className="w-100 rounded-3 my-4 btn-add" disabled={uploading}>
-            {uploading ? "Adding..." : "Add"}
+          <Button type="submit" className="w-100 rounded-3 my-4 btn-add">
+            Add
           </Button>
         </Form>
       </Modal.Body>

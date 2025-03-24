@@ -19,7 +19,6 @@ export default function HeaderPage() {
   useEffect(() => {
     bookServ.getProfile()
       .then((res)=>{
-        console.log(res.data)
         setUser(res.data)
       })
       .catch((err)=>{

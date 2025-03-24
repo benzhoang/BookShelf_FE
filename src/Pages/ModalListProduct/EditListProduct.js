@@ -15,6 +15,8 @@ const EditListProduct = ({ show, handleClose, book }) => {
     image: '',
   });
 
+
+
   const [mediaOptions, setMediaOptions] = useState([]);
   const [cate, setCate] = useState([]);
   const [actor, setActor] = useState([]);
@@ -64,12 +66,13 @@ const EditListProduct = ({ show, handleClose, book }) => {
         price: book.price?.$numberDecimal || "",
         description: book.description || "",
         quantity: book.quantity || "",
-        actor: actor.find((ac) => ac._id === book.actor)?.actorName || "",
-        bookMedia: mediaOptions.find((media) => media._id === book.origin)?.origin || "",
-        category: cate.find((c) => c._id === book.category)?.categoryName || "",
+        actor: book.actor.actorName || "",
+        bookMedia: book.bookMedia.origin || "",
+        category: book.category.categoryName || "",
       });
     }
   }, [book, actor, mediaOptions, cate]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -94,7 +97,6 @@ const EditListProduct = ({ show, handleClose, book }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated Book Data:", formData);
     const data = {
       bookName: formData.bookName,
       description: formData.description,
@@ -105,7 +107,6 @@ const EditListProduct = ({ show, handleClose, book }) => {
       quantity: formData.quantity,
       image: formData.image || 'no-art',
     };
-    console.log(data);
     if (!book?._id) {
       console.error("Book ID is missing!");
       return;

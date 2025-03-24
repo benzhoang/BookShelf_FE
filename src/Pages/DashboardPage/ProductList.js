@@ -55,7 +55,6 @@ const ProductList = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  console.log(total, quan)
 
   const handleEdit = (book) => {
     setSelectedBook(book);

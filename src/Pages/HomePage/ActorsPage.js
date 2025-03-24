@@ -34,7 +34,6 @@ const ActorsPage = () => {
   };
 
   const handleDelete = async (id) => {
-    console.log(id)
     await bookServ.deleteActor(id);
     fetchActors();
   };

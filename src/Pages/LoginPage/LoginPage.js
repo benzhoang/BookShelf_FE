@@ -32,7 +32,6 @@ export default function LoginPage() {
       email: username,
       password: password,
     };
-    console.log(loginForm)
     userServ
       .postLogin(loginForm)
       .then((res) => {
@@ -72,7 +71,6 @@ export default function LoginPage() {
       };
       userServ.postSignUp(loginForm)
         .then((res) =>{
-          console.log(res)
           setTimeout(() => {
             openNotification(
               "success",
@@ -92,7 +90,6 @@ export default function LoginPage() {
             err.response.data.message
           );
         })
-      console.log(loginForm)
     }
     
     
@@ -101,7 +98,6 @@ export default function LoginPage() {
   const handleSignIn = async () => {
     try {
       const userData = await signInWithGoogle();
-      console.log(userData);
       navigate("/product");
     } catch (error) {
       console.error("Error signing in: ", error.message);
