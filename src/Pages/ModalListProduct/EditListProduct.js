@@ -134,11 +134,12 @@ const EditListProduct = ({ show, handleClose, book }) => {
         closeButton
         className="border-0"
         style={{ backgroundColor: "#65c3a5" }}
-      ></Modal.Header>
+      ></Modal.Header>  
       <Modal.Body className="px-5 modal-body-custom">
-        <h3 className="text-center text-white mb-4">Edit Book</h3>
+        <h3 className="text-center text-white mb-4">Chỉnh Sửa Sách</h3>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-4">
+          <label>Tên Sách</label>
             <Form.Control
               type="text"
               name="bookName"
@@ -148,6 +149,7 @@ const EditListProduct = ({ show, handleClose, book }) => {
             />
           </Form.Group>
           <Form.Group className="mb-4">
+            <label>Giá</label>
             <Form.Control
               type="text"
               name="price"
@@ -157,6 +159,7 @@ const EditListProduct = ({ show, handleClose, book }) => {
             />
           </Form.Group>
           <Form.Group className="mb-4">
+          <label>Chi Tiết</label>
             <Form.Control
               as="textarea"
               rows={2}
@@ -167,6 +170,7 @@ const EditListProduct = ({ show, handleClose, book }) => {
             />
           </Form.Group>
           <Form.Group className="mb-4">
+          <label>Số Lượng</label>
             <Form.Control
               type="number"
               name="quantity"
@@ -176,6 +180,7 @@ const EditListProduct = ({ show, handleClose, book }) => {
             />
           </Form.Group>
           <Form.Group className="mb-4">
+          <label>Tác Giả</label>
             <Form.Select
               name="actor"
               value={actor.find((ac) => ac.actorName === formData.actor)?._id || ""}
@@ -191,6 +196,7 @@ const EditListProduct = ({ show, handleClose, book }) => {
             </Form.Select>
           </Form.Group>
           <Form.Group className="mb-4">
+          <label>Thể Loại</label>
             <Form.Select
               name="category"
               value={cate.find((c) => c.categoryName === formData.category)?._id || ""}
@@ -206,6 +212,7 @@ const EditListProduct = ({ show, handleClose, book }) => {
             </Form.Select>
           </Form.Group>
           <Form.Group className="mb-4">
+          <label>Nhà Xuất Bản</label>
             <Form.Select
               name="bookMedia"
               value={mediaOptions.find((media) => media.origin === formData.bookMedia)?._id || ""}
@@ -226,7 +233,7 @@ const EditListProduct = ({ show, handleClose, book }) => {
             className="w-100 rounded-3 mb-5 my-4"
             style={{ backgroundColor: "gold", border: "none" }}
           >
-            Edit
+            Chỉnh Sửa
           </Button>
         </Form>
       </Modal.Body>

@@ -21,6 +21,12 @@ const ActorsPage = () => {
     }
   };
 
+  const handleClose = () => {
+    setShowModal(false);
+    setEditingId(null);
+    setActorName("");
+  };
+
   const handleSave = async () => {
     if (editingId) {
       await bookServ.updateActor(editingId, { actorName });
@@ -28,9 +34,7 @@ const ActorsPage = () => {
       await bookServ.postActor({ actorName });
     }
     fetchActors();
-    setShowModal(false);
-    setActorName("");
-    setEditingId(null);
+    handleClose();
   };
 
   const handleDelete = async (id) => {
@@ -41,7 +45,11 @@ const ActorsPage = () => {
   return (
     <div className="container">
       <h2>Actors</h2>
-      <Button onClick={() => setShowModal(true)}>Add Actor</Button>
+      <Button onClick={() => {
+        setShowModal(true);
+        setEditingId(null);
+        setActorName("");
+      }}>Add Actor</Button>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -56,7 +64,11 @@ const ActorsPage = () => {
               <td>{actor._id}</td>
               <td>{actor.actorName}</td>
               <td>
-                <Button onClick={() => { setActorName(actor.actorName); setEditingId(actor._id); setShowModal(true); }}>Edit</Button>
+                <Button onClick={() => {
+                  setActorName(actor.actorName);
+                  setEditingId(actor._id);
+                  setShowModal(true);
+                }}>Edit</Button>
                 <Button variant="danger" onClick={() => handleDelete(actor._id)}>Delete</Button>
               </td>
             </tr>
@@ -64,12 +76,16 @@ const ActorsPage = () => {
         </tbody>
       </Table>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
+      <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>{editingId ? "Edit Actor" : "Add Actor"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Control type="text" value={actorName} onChange={(e) => setActorName(e.target.value)} />
+          <Form.Control 
+            type="text" 
+            value={actorName} 
+            onChange={(e) => setActorName(e.target.value)} 
+          />
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={handleSave}>Save</Button>

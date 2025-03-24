@@ -15,7 +15,10 @@ import { FaBoxOpen } from "react-icons/fa";
 import DeleteListProduct from "../ModalListProduct/DeleteListProduct";
 import AddListProduct from "../ModalListProduct/AddListProduct";
 import { bookServ } from "../../service/appService";
+import DetailProduct from "./DetailProduct";
+import { useNavigate } from "react-router-dom";
 import "./ProductList.css";
+
 const ITEMS_PER_PAGE = 5;
 
 const ProductList = () => {
@@ -30,6 +33,8 @@ const ProductList = () => {
   const [quan, setQuan] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalPriceSel, setTotalPriceSel] = useState(0);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     bookServ
@@ -65,6 +70,11 @@ const ProductList = () => {
     setShowEditModal(true);
   };
 
+  const handleDetail = (book) => {
+    setSelectedBook(book);
+    setShowDetailModal(true);
+  };
+
   const handleDelete = (book) => {
     setSelectedBook(book);
     setShowDeleteModal(true);
@@ -84,16 +94,21 @@ const ProductList = () => {
 
   return (
     <div className="product-list-container">
+      <DetailProduct
+        show={showDetailModal}
+        handleClose={() => setShowDetailModal(false)}
+        book={selectedBook}
+      />
+
       <Container>
         <Row className="stats-cards mb-4">
-          <Col md={6} className="mb-4 mb-md-0">
+          <Col md={6}>
             <Card className="stats-card sales-card">
               <Card.Body className="d-flex justify-content-between align-items-center p-4">
                 <div>
                   <div className="stats-title">TỔNG ĐÃ BÁN</div>
                   <div className="stats-value">
-                    {total}{" "}
-                    <span className="stats-unit">~${totalPriceSel}K</span>
+                    {total} ~ ${totalPriceSel}K
                   </div>
                 </div>
                 <HiOutlineShoppingBag size={80} className="stats-icon" />
@@ -106,7 +121,7 @@ const ProductList = () => {
                 <div>
                   <div className="stats-title">TỔNG TỒN KHO</div>
                   <div className="stats-value">
-                    {quan} <span className="stats-unit">~${totalPrice}K</span>
+                    {quan} ~ ${totalPrice}K
                   </div>
                 </div>
                 <FaBoxOpen size={80} className="stats-icon" />
@@ -131,11 +146,7 @@ const ProductList = () => {
                   className="search-input"
                 />
               </div>
-              <Button
-                variant="primary"
-                className="add-button"
-                onClick={handleAdd}
-              >
+              <Button variant="primary" className="add-button" onClick={handleAdd}>
                 Thêm sách
               </Button>
             </div>
@@ -154,7 +165,7 @@ const ProductList = () => {
                 </thead>
                 <tbody>
                   {displayedBooks.map((product, index) => (
-                    <tr key={product.id}>
+                    <tr key={product.id} onClick={() => handleDetail(product)}>
                       <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
                       <td className="book-title">{product.bookName}</td>
                       <td className="price">{product.price.$numberDecimal}$</td>
@@ -162,18 +173,10 @@ const ProductList = () => {
                       <td>{product.soldQuantity}</td>
                       <td>
                         <div className="action-buttons">
-                          <Button
-                            variant="outline-warning"
-                            className="edit-button"
-                            onClick={() => handleEdit(product)}
-                          >
+                          <Button variant="outline-warning" onClick={(e) => {e.stopPropagation(); handleEdit(product);}}>
                             Sửa
                           </Button>
-                          <Button
-                            variant="outline-danger"
-                            className="delete-button"
-                            onClick={() => handleDelete(product)}
-                          >
+                          <Button variant="outline-danger" onClick={(e) => {e.stopPropagation(); handleDelete(product);}}>
                             Xóa
                           </Button>
                         </div>
@@ -183,43 +186,12 @@ const ProductList = () => {
                 </tbody>
               </Table>
             </div>
-
-            {/* Pagination Controls */}
-            <div className="pagination-container">
-              <Button
-                className="pagination-button"
-                onClick={() => setCurPage((prev) => Math.max(prev - 1, 1))}
-                disabled={curPage === 1}
-              >
-                Trang trước
-              </Button>
-              <div className="pagination-info">
-                Trang {curPage} / {totalPages}
-              </div>
-              <Button
-                className="pagination-button"
-                onClick={() =>
-                  setCurPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={curPage === totalPages}
-              >
-                Trang sau
-              </Button>
-            </div>
           </Card.Body>
         </Card>
       </Container>
 
-      <EditListProduct
-        show={showEditModal}
-        handleClose={handleCloseEdit}
-        book={selectedBook}
-      />
-      <DeleteListProduct
-        show={showDeleteModal}
-        handleClose={handleCloseDelete}
-        book={selectedBook}
-      />
+      <EditListProduct show={showEditModal} handleClose={handleCloseEdit} book={selectedBook} />
+      <DeleteListProduct show={showDeleteModal} handleClose={handleCloseDelete} book={selectedBook} />
       <AddListProduct show={showAddModal} handleClose={handleCloseAdd} />
     </div>
   );
