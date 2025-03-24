@@ -17,6 +17,7 @@ import AddListProduct from "../ModalListProduct/AddListProduct";
 import { bookServ } from "../../service/appService";
 import DetailProduct from "./DetailProduct";
 import { useNavigate } from "react-router-dom";
+import "./ProductList.css";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -35,21 +36,26 @@ const ProductList = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const navigate = useNavigate();
 
-
   useEffect(() => {
     bookServ
       .getBook()
       .then((res) => {
         setDataBook(res.data);
-        const totalSold = res.data.reduce((sum, book) => sum + (book.soldQuantity || 0), 0);
-        const totalQuan = res.data.reduce((sum, book) => sum + (book.quantity || 0), 0);
+        const totalSold = res.data.reduce(
+          (sum, book) => sum + (book.soldQuantity || 0),
+          0
+        );
+        const totalQuan = res.data.reduce(
+          (sum, book) => sum + (book.quantity || 0),
+          0
+        );
         const totalPriceValue = res.data.reduce((sum, book) => {
           const price = parseFloat(book.price?.$numberDecimal || 0);
-          return sum + (book.quantity * price);
+          return sum + book.quantity * price;
         }, 0);
         const totalPriceSell = res.data.reduce((sum, book) => {
           const price = parseFloat(book.price?.$numberDecimal || 0);
-          return sum + (book.soldQuantity * price);
+          return sum + book.soldQuantity * price;
         }, 0);
         setTotal(totalSold);
         setQuan(totalQuan);
@@ -58,7 +64,6 @@ const ProductList = () => {
       })
       .catch((err) => console.log(err));
   }, []);
-
 
   const handleEdit = (book) => {
     setSelectedBook(book);
@@ -69,8 +74,6 @@ const ProductList = () => {
     setSelectedBook(book);
     setShowDetailModal(true);
   };
-
-  
 
   const handleDelete = (book) => {
     setSelectedBook(book);
@@ -89,136 +92,106 @@ const ProductList = () => {
     curPage * ITEMS_PER_PAGE
   );
 
-
   return (
-    <div style={{ backgroundColor: "#D3D3D3" }}>
-      <DetailProduct show={showDetailModal} handleClose={() => setShowDetailModal(false)} book={selectedBook} />
-      <Container style={{ height: "100vh", padding: "2%" }}>
-        <Row className="mb-2 d-flex justify-content-between">
-          <Col md={5}>
-            <Card className="p-4 rounded-5 d-flex flex-row justify-content-between align-items-center">
-              <Card.Body>
-                <Card.Title>TỔNG ĐÃ BÁN</Card.Title>
-                <Card.Text>{total} ~ ${totalPriceSel}K</Card.Text>
+    <div className="product-list-container">
+      <DetailProduct
+        show={showDetailModal}
+        handleClose={() => setShowDetailModal(false)}
+        book={selectedBook}
+      />
+
+      <Container>
+        <Row className="stats-cards mb-4">
+          <Col md={6}>
+            <Card className="stats-card sales-card">
+              <Card.Body className="d-flex justify-content-between align-items-center p-4">
+                <div>
+                  <div className="stats-title">TỔNG ĐÃ BÁN</div>
+                  <div className="stats-value">
+                    {total} ~ ${totalPriceSel}K
+                  </div>
+                </div>
+                <HiOutlineShoppingBag size={80} className="stats-icon" />
               </Card.Body>
-              <HiOutlineShoppingBag size={80} color="green" />
             </Card>
           </Col>
-          <Col md={5}>
-            <Card className="p-4 rounded-5 d-flex flex-row justify-content-between align-items-center">
-              <Card.Body>
-                <Card.Title>TỔNG TỒN KHO</Card.Title>
-                <Card.Text>{quan} ~ ${totalPrice}k</Card.Text>
+          <Col md={6}>
+            <Card className="stats-card inventory-card">
+              <Card.Body className="d-flex justify-content-between align-items-center p-4">
+                <div>
+                  <div className="stats-title">TỔNG TỒN KHO</div>
+                  <div className="stats-value">
+                    {quan} ~ ${totalPrice}K
+                  </div>
+                </div>
+                <FaBoxOpen size={80} className="stats-icon" />
               </Card.Body>
-              <FaBoxOpen size={80} color="goldenrod" />
             </Card>
           </Col>
         </Row>
 
-        <Card>
-          <Card.Header className="bg-success text-white">
+        <Card className="main-card">
+          <Card.Header className="main-card-header">
             DANH SÁCH SẢN PHẨM
           </Card.Header>
           <Card.Body>
-            <Form className="mb-3 d-flex align-items-center justify-content-between">
-              <div className="position-relative w-25">
+            <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+              <div className="search-container">
+                <BsSearch className="search-icon" />
                 <Form.Control
                   type="text"
                   placeholder="Tìm kiếm sách..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="ps-5"
-                />
-                <BsSearch
-                  className="position-absolute "
-                  style={{
-                    top: "50%",
-                    left: "10px",
-                    transform: "translateY(-50%)",
-                  }}
+                  className="search-input"
                 />
               </div>
-              <Button variant="info" className="px-4 ms-2" onClick={handleAdd}>
-                Thêm
+              <Button variant="primary" className="add-button" onClick={handleAdd}>
+                Thêm sách
               </Button>
-            </Form>
+            </div>
 
-            <Table striped bordered hover>
-              <thead>
-                <tr className="text-center">
-                  <th>STT</th>
-                  <th>Tên Sách</th>
-                  <th>Giá Bán</th>
-                  <th>Tồn kho</th>
-                  <th>Đã bán</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayedBooks.map((product, index) => (
-                  <tr key={product.id} className="text-center">
-                    <td onClick={() => handleDetail(product)}>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
-                    <td onClick={() => handleDetail(product)}>{product.bookName}</td>
-                    <td onClick={() => handleDetail(product)}>{product.price.$numberDecimal}$</td>
-                    <td onClick={() => handleDetail(product)}>{product.quantity}</td>
-                    <td onClick={() => handleDetail(product)}>{product.soldQuantity}</td>
-                    <td className="d-flex justify-content-around">
-                      <Button
-                        variant="warning"
-                        className="px-4"
-                        onClick={() => handleEdit(product)}
-                      >
-                        Sửa
-                      </Button>
-                      <Button
-                        variant="danger"
-                        className="px-4"
-                        onClick={() => handleDelete(product)}
-                      >
-                        Xóa
-                      </Button>
-                    </td>
+            <div className="table-responsive">
+              <Table className="product-table">
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    <th>Tên Sách</th>
+                    <th>Giá Bán</th>
+                    <th>Tồn kho</th>
+                    <th>Đã bán</th>
+                    <th>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-
-            {/* Pagination Controls */}
-            <div className="d-flex justify-content-center mt-3">
-              <Button
-                variant="secondary"
-                onClick={() => setCurPage((prev) => Math.max(prev - 1, 1))}
-                disabled={curPage === 1}
-              >
-                Trang trước
-              </Button>
-              <span className="mx-3">
-                Trang {curPage} / {totalPages}
-              </span>
-              <Button
-                variant="secondary"
-                onClick={() =>
-                  setCurPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={curPage === totalPages}
-              >
-                Trang sau
-              </Button>
+                </thead>
+                <tbody>
+                  {displayedBooks.map((product, index) => (
+                    <tr key={product.id} onClick={() => handleDetail(product)}>
+                      <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
+                      <td className="book-title">{product.bookName}</td>
+                      <td className="price">{product.price.$numberDecimal}$</td>
+                      <td>{product.quantity}</td>
+                      <td>{product.soldQuantity}</td>
+                      <td>
+                        <div className="action-buttons">
+                          <Button variant="outline-warning" onClick={(e) => {e.stopPropagation(); handleEdit(product);}}>
+                            Sửa
+                          </Button>
+                          <Button variant="outline-danger" onClick={(e) => {e.stopPropagation(); handleDelete(product);}}>
+                            Xóa
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
             </div>
           </Card.Body>
         </Card>
       </Container>
 
-      <EditListProduct
-        show={showEditModal}
-        handleClose={handleCloseEdit}
-        book={selectedBook}
-      />
-      <DeleteListProduct
-        show={showDeleteModal}
-        handleClose={handleCloseDelete}
-        book={selectedBook}
-      />
+      <EditListProduct show={showEditModal} handleClose={handleCloseEdit} book={selectedBook} />
+      <DeleteListProduct show={showDeleteModal} handleClose={handleCloseDelete} book={selectedBook} />
       <AddListProduct show={showAddModal} handleClose={handleCloseAdd} />
     </div>
   );
