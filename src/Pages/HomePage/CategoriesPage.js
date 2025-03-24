@@ -21,6 +21,12 @@ const CategoriesPage = () => {
     }
   };
 
+  const handleClose = () => {
+    setShowModal(false);
+    setEditingId(null);
+    setCategoryName("");
+  };
+
   const handleSave = async () => {
     if (editingId) {
       await bookServ.updateCate(editingId, { categoryName });
@@ -28,9 +34,7 @@ const CategoriesPage = () => {
       await bookServ.postCate({ categoryName });
     }
     fetchCategories();
-    setShowModal(false);
-    setCategoryName("");
-    setEditingId(null);
+    handleClose();
   };
 
   const handleDelete = async (id) => {
@@ -41,7 +45,11 @@ const CategoriesPage = () => {
   return (
     <div className="container">
       <h2>Categories</h2>
-      <Button onClick={() => setShowModal(true)}>Add Category</Button>
+      <Button onClick={() => {
+        setShowModal(true);
+        setEditingId(null);
+        setCategoryName("");
+      }}>Add Category</Button>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -56,7 +64,11 @@ const CategoriesPage = () => {
               <td>{cat._id}</td>
               <td>{cat.categoryName}</td>
               <td>
-                <Button onClick={() => { setCategoryName(cat.categoryName); setEditingId(cat._id); setShowModal(true); }}>Edit</Button>
+                <Button onClick={() => {
+                  setCategoryName(cat.categoryName);
+                  setEditingId(cat._id);
+                  setShowModal(true);
+                }}>Edit</Button>
                 <Button variant="danger" onClick={() => handleDelete(cat._id)}>Delete</Button>
               </td>
             </tr>
@@ -64,7 +76,7 @@ const CategoriesPage = () => {
         </tbody>
       </Table>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
+      <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>{editingId ? "Edit Category" : "Add Category"}</Modal.Title>
         </Modal.Header>

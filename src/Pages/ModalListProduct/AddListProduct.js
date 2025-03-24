@@ -68,12 +68,12 @@ const AddListProduct = ({ show, handleClose }) => {
         style={{ backgroundColor: "#65c3a5" }}
       ></Modal.Header>
       <Modal.Body className="px-5">
-        <h3 className="text-center text-white mb-4">Add Book</h3>
+        <h3 className="text-center text-white mb-4">Thêm Sách</h3>
         <Form onSubmit={onFinish}>
           <Form.Group className="mb-4">
             <Form.Control
               type="text"
-              placeholder="Book Name"
+              placeholder="Tên Sách"
               value={bookName}
               onChange={(e) => setBookName(e.target.value)}
             />
@@ -82,7 +82,7 @@ const AddListProduct = ({ show, handleClose }) => {
           <Form.Group className="mb-4">
             <Form.Control
               type="number"
-              placeholder="Price"
+              placeholder="Giá"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
             />
@@ -91,7 +91,7 @@ const AddListProduct = ({ show, handleClose }) => {
           <Form.Group className="mb-4">
             <Form.Control
               type="number"
-              placeholder="Số lượng"
+              placeholder="Số Lượng"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               required
@@ -102,7 +102,7 @@ const AddListProduct = ({ show, handleClose }) => {
             <Form.Control
               as="textarea"
               rows={2}
-              placeholder="Description"
+              placeholder="Chi Tiết"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -116,7 +116,7 @@ const AddListProduct = ({ show, handleClose }) => {
                   value={categoryName}
                   onChange={(e) => setCategoryName(e.target.value)}
                 >
-                  <option value="">Select Category</option>
+                  <option value="">Chọn Thể Loại</option>
                   {cate.map((item, index) => (
                     <option
                       key={`category-${item._id || index}`}
@@ -133,7 +133,7 @@ const AddListProduct = ({ show, handleClose }) => {
                   className="w-100"
                   onClick={() => navigate("/categories")}
                 >
-                  View
+                  Xem
                 </Button>
               </Col>
             </Row>
@@ -147,7 +147,7 @@ const AddListProduct = ({ show, handleClose }) => {
                   value={actorName}
                   onChange={(e) => setActorName(e.target.value)}
                 >
-                  <option value="">Select Actor</option>
+                  <option value="">Chọn Tác Giả</option>
                   {actor.map((item, index) => (
                     <option
                       key={`actor-${item._id || index}`}
@@ -164,7 +164,7 @@ const AddListProduct = ({ show, handleClose }) => {
                   className="w-100"
                   onClick={() => navigate("/actors")}
                 >
-                  View
+                  Xem
                 </Button>
               </Col>
             </Row>
@@ -178,7 +178,7 @@ const AddListProduct = ({ show, handleClose }) => {
                   value={origin}
                   onChange={(e) => setOrigin(e.target.value)}
                 >
-                  <option value="">Select Origin</option>
+                  <option value="">Chọn Nhà Xuất Bản</option>
                   {origins.map((item, index) => (
                     <option
                       key={`origin-${item._id || index}`}
@@ -195,7 +195,7 @@ const AddListProduct = ({ show, handleClose }) => {
                   className="w-100"
                   onClick={() => navigate("/origins")}
                 >
-                  View
+                  Xem
                 </Button>
               </Col>
             </Row>
@@ -203,10 +203,10 @@ const AddListProduct = ({ show, handleClose }) => {
 
           {/* Simple Image URL input field */}
           <Form.Group className="mb-4">
-            <Form.Label className="text-white">Image URL</Form.Label>
+            <Form.Label className="text-white">Link Hình Ảnh</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Paste image URL here"
+              placeholder="Dán đường dẫn ảnh vào đây"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
             />
@@ -214,7 +214,7 @@ const AddListProduct = ({ show, handleClose }) => {
 
           <hr className="border-white" />
           <Button type="submit" className="w-100 rounded-3 my-4 btn-add">
-            Add
+            Thêm
           </Button>
         </Form>
       </Modal.Body>

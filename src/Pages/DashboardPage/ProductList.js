@@ -15,6 +15,8 @@ import { FaBoxOpen } from "react-icons/fa";
 import DeleteListProduct from "../ModalListProduct/DeleteListProduct";
 import AddListProduct from "../ModalListProduct/AddListProduct";
 import { bookServ } from "../../service/appService";
+import DetailProduct from "./DetailProduct";
+import { useNavigate } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -30,6 +32,8 @@ const ProductList = () => {
   const [quan, setQuan] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalPriceSel, setTotalPriceSel] = useState(0);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -61,6 +65,11 @@ const ProductList = () => {
     setShowEditModal(true);
   };
 
+  const handleDetail = (book) => {
+    setSelectedBook(book);
+    setShowDetailModal(true);
+  };
+
   
 
   const handleDelete = (book) => {
@@ -80,8 +89,10 @@ const ProductList = () => {
     curPage * ITEMS_PER_PAGE
   );
 
+
   return (
     <div style={{ backgroundColor: "#D3D3D3" }}>
+      <DetailProduct show={showDetailModal} handleClose={() => setShowDetailModal(false)} book={selectedBook} />
       <Container style={{ height: "100vh", padding: "2%" }}>
         <Row className="mb-2 d-flex justify-content-between">
           <Col md={5}>
@@ -146,11 +157,11 @@ const ProductList = () => {
               <tbody>
                 {displayedBooks.map((product, index) => (
                   <tr key={product.id} className="text-center">
-                    <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
-                    <td>{product.bookName}</td>
-                    <td>{product.price.$numberDecimal}$</td>
-                    <td>{product.quantity}</td>
-                    <td>{product.soldQuantity}</td>
+                    <td onClick={() => handleDetail(product)}>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
+                    <td onClick={() => handleDetail(product)}>{product.bookName}</td>
+                    <td onClick={() => handleDetail(product)}>{product.price.$numberDecimal}$</td>
+                    <td onClick={() => handleDetail(product)}>{product.quantity}</td>
+                    <td onClick={() => handleDetail(product)}>{product.soldQuantity}</td>
                     <td className="d-flex justify-content-around">
                       <Button
                         variant="warning"
