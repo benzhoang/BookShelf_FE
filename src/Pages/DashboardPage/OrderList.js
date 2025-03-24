@@ -5,6 +5,9 @@ import { Table, Form, Container, Button, Card } from "react-bootstrap";
 import DeleteOrderList from "../ModalOrderList/DeleteOrderList";
 import AddOrderList from "../ModalOrderList/AddOrderList";
 import DetailOrderList from "../ModalOrderList/DetailOrderList";
+import "./OrderList.css";
+
+const ITEMS_PER_PAGE = 4;
 
 const OrderList = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -13,6 +16,7 @@ const OrderList = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [curPage, setCurPage] = useState(1);
 
   const orders = [
     {
@@ -45,7 +49,39 @@ const OrderList = () => {
       employeeId: "EMP105",
       saleDate: "2024-02-14",
     },
+    {
+      id: 6,
+      code: "ORD003",
+      employeeId: "EMP103",
+      saleDate: "2024-02-12",
+    },
+    {
+      id: 7,
+      code: "ORD004",
+      employeeId: "EMP104",
+      saleDate: "2024-02-13",
+    },
+    {
+      id: 8,
+      code: "ORD005",
+      employeeId: "EMP105",
+      saleDate: "2024-02-14",
+    },
   ];
+
+  // Pagination
+  const totalPages = Math.ceil(orders.length / ITEMS_PER_PAGE);
+
+  // Filter orders by search term
+  const filteredOrders = orders.filter((order) =>
+    order.code.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Get current page items
+  const displayedOrders = filteredOrders.slice(
+    (curPage - 1) * ITEMS_PER_PAGE,
+    curPage * ITEMS_PER_PAGE
+  );
 
   const handleEdit = (order) => {
     setSelectedOrder(order);
@@ -67,93 +103,110 @@ const OrderList = () => {
   };
 
   return (
-    <div style={{ backgroundColor: "#D3D3D3" , height: '100vh'}}>
-      <Container fluid className="p-5">
-        <Card>
-          <Card.Header className="bg-success text-white">
+    <div className="order-list-container">
+      <Container className="py-4">
+        <Card className="main-card">
+          <Card.Header className="main-card-header">
             DANH SÁCH ĐƠN HÀNG
           </Card.Header>
           <Card.Body>
-            <Form className="mb-3 d-flex align-items-center justify-content-between">
-              <div className="position-relative w-25">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <div className="search-container">
+                <BsSearch className="search-icon" />
                 <Form.Control
                   type="text"
                   placeholder="Tìm kiếm mã đơn hàng..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="ps-5"
-                />
-                <BsSearch
-                  className="position-absolute "
-                  style={{
-                    top: "50%",
-                    left: "10px",
-                    transform: "translateY(-50%)",
-                  }}
+                  className="search-input"
                 />
               </div>
-              <div>
-                <Button
-                  variant="info"
-                  className="px-4 ms-2"
-                  onClick={handleAdd}
-                >
-                  Thêm
-                </Button>
-              </div>
-            </Form>
+              <Button
+                variant="primary"
+                className="add-button"
+                onClick={handleAdd}
+              >
+                Thêm đơn hàng
+              </Button>
+            </div>
 
-            <Table striped bordered hover>
-              <thead>
-                <tr className="text-center">
-                  <th>ID</th>
-                  <th>Mã Đơn Hàng</th>
-                  <th>Mã Nhân Viên</th>
-                  <th>Ngày Bán</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders
-                  .filter((order) =>
-                    order.code.toLowerCase().includes(searchTerm.toLowerCase())
-                  )
-                  .map((order) => (
-                    <tr key={order.id} className="text-center">
-                      <td>{order.id}</td>
-                      <td>{order.code}</td>
-                      <td>{order.employeeId}</td>
+            <div className="table-responsive">
+              <Table className="order-table">
+                <thead>
+                  <tr>
+                    <th width="5%">STT</th>
+                    <th width="25%">Mã Đơn Hàng</th>
+                    <th width="25%">Mã Nhân Viên</th>
+                    <th width="25%">Ngày Bán</th>
+                    <th width="20%">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayedOrders.map((order, index) => (
+                    <tr key={`order-${order.id}`}>
+                      <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
+                      <td className="order-code">{order.code}</td>
+                      <td className="employee-id">{order.employeeId}</td>
                       <td>{order.saleDate}</td>
-                      <td className="d-flex justify-content-around">
-                        <Button
-                          variant="warning"
-                          style={{ width: "93px", padding: "10px" }}
-                          onClick={() => handleEdit(order)}
-                        >
-                          Sửa
-                        </Button>
-                        <Button
-                          style={{ width: "93px", padding: "10px" }}
-                          variant="danger"
-                          onClick={() => handleDelete(order)}
-                        >
-                          Xóa
-                        </Button>
-                        <Button
-                          style={{ width: "93px", padding: "10px" }}
-                          variant="secondary"
-                          onClick={() => handleDetail(order)}
-                        >
-                          Detail
-                        </Button>
+                      <td>
+                        <div className="action-buttons">
+                          <Button
+                            variant="outline-warning"
+                            className="edit-button"
+                            onClick={() => handleEdit(order)}
+                          >
+                            Sửa
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            className="delete-button"
+                            onClick={() => handleDelete(order)}
+                          >
+                            Xóa
+                          </Button>
+                          <Button
+                            variant="outline-secondary"
+                            className="detail-button"
+                            onClick={() => handleDetail(order)}
+                          >
+                            Chi tiết
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
-              </tbody>
-            </Table>
+                </tbody>
+              </Table>
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="pagination-container">
+              <Button
+                variant="outline-secondary"
+                onClick={() => setCurPage((prev) => Math.max(prev - 1, 1))}
+                disabled={curPage === 1}
+                className="pagination-button"
+              >
+                &laquo; Trang trước
+              </Button>
+              <div className="pagination-info">
+                Trang {curPage} / {totalPages}
+              </div>
+              <Button
+                variant="outline-secondary"
+                onClick={() =>
+                  setCurPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={curPage === totalPages}
+                className="pagination-button"
+              >
+                Trang sau &raquo;
+              </Button>
+            </div>
           </Card.Body>
         </Card>
       </Container>
+
       <EditOrderList
         show={showEditModal}
         handleClose={() => setShowEditModal(false)}

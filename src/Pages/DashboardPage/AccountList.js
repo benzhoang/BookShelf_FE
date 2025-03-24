@@ -5,7 +5,7 @@ import DeleteAccount from "../ModalAccountList/DeleteAccount";
 import AddAccount from "../ModalAccountList/AddAccount";
 import EditAccount from "../ModalAccountList/EditAccount";
 import { bookServ } from "../../service/appService";
-
+import "./AccountList.css";
 const ITEMS_PER_PAGE = 5; // Mỗi trang hiển thị 5 dòng
 
 const AccountList = () => {
@@ -61,99 +61,95 @@ const AccountList = () => {
   };
 
   return (
-    <div style={{ backgroundColor: "#D3D3D3", height: "100vh" }}>
-      <Container fluid className="p-5">
-        <Card>
-          <Card.Header className="bg-success text-white">
+    <div className="account-list-container">
+      <Container>
+        <Card className="main-card">
+          <Card.Header className="main-card-header">
             DANH SÁCH TÀI KHOẢN
           </Card.Header>
           <Card.Body>
-            <Form className="mb-3 d-flex align-items-center justify-content-between">
-              <div className="position-relative w-25">
+            <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+              <div className="search-container">
+                <BsSearch className="search-icon" />
                 <Form.Control
                   type="text"
-                  placeholder="Tìm kiếm mã đơn hàng..."
+                  placeholder="Tìm kiếm tài khoản..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="ps-5"
-                />
-                <BsSearch
-                  className="position-absolute "
-                  style={{
-                    top: "50%",
-                    left: "10px",
-                    transform: "translateY(-50%)",
-                  }}
+                  className="search-input"
                 />
               </div>
-              <div>
-                <Button
-                  variant="info"
-                  className="px-4 ms-2"
-                  onClick={handleAdd}
-                >
-                  Thêm
-                </Button>
-              </div>
-            </Form>
+              <Button
+                variant="primary"
+                className="add-button"
+                onClick={handleAdd}
+              >
+                Thêm tài khoản
+              </Button>
+            </div>
 
-            <Table striped bordered hover>
-              <thead>
-                <tr className="text-center">
-                  <th>STT</th>
-                  <th>Tên Tài Khoản</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayedUsers.map((account, index) => (
-                  <tr key={account.id} className="text-center">
-                    <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>{" "}
-                    {/* STT tăng dần */}
-                    <td>{account.userName}</td>
-                    <td>{account.email}</td>
-                    <td>{account.role}</td>
-                    <td className="d-flex justify-content-around">
-                      <Button
-                        variant="warning"
-                        style={{ width: "93px", padding: "10px" }}
-                        onClick={() => handleEdit(account)}
-                      >
-                        Sửa
-                      </Button>
-                      <Button
-                        style={{ width: "93px", padding: "10px" }}
-                        variant="danger"
-                        onClick={() => handleDelete(account)}
-                      >
-                        Xóa
-                      </Button>
-                    </td>
+            <div className="table-responsive">
+              <Table className="account-table">
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    <th>Tên Tài Khoản</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {displayedUsers.map((account, index) => (
+                    <tr key={account.id}>
+                      <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
+                      <td className="username">{account.userName}</td>
+                      <td>{account.email}</td>
+                      <td className="role">{account.role}</td>
+                      <td>
+                        <div className="action-buttons">
+                          <Button
+                            variant="outline-warning"
+                            className="edit-button"
+                            onClick={() => handleEdit(account)}
+                          >
+                            Sửa
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            className="delete-button"
+                            onClick={() => handleDelete(account)}
+                          >
+                            Xóa
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
 
             {/* Pagination Controls */}
-            <div className="d-flex justify-content-between mt-3">
+            <div className="pagination-container">
               <Button
-                variant="primary"
-                onClick={handlePrevPage}
+                className="pagination-button"
+                onClick={() => setCurPage((prev) => Math.max(prev - 1, 1))}
                 disabled={curPage === 1}
               >
-                ← Previous
+                Trang trước
               </Button>
-              <span>
+              <div className="pagination-info">
                 Trang {curPage} / {totalPages}
-              </span>
+              </div>
               <Button
-                variant="primary"
-                onClick={handleNextPage}
+                className="pagination-button"
+                onClick={() =>
+                  setCurPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={curPage === totalPages}
               >
-                Next →
+                Trang sau
               </Button>
             </div>
           </Card.Body>
