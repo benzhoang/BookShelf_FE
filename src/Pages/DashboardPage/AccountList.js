@@ -37,14 +37,7 @@ const AccountList = () => {
     curPage * ITEMS_PER_PAGE
   );
 
-  // Xử lý chuyển trang
-  const handleNextPage = () => {
-    if (curPage < totalPages) setCurPage(curPage + 1);
-  };
 
-  const handlePrevPage = () => {
-    if (curPage > 1) setCurPage(curPage - 1);
-  };
 
   const handleEdit = (order) => {
     setSelectedOrder(order);
@@ -108,13 +101,7 @@ const AccountList = () => {
                       <td className="role">{account.role}</td>
                       <td>
                         <div className="action-buttons">
-                          <Button
-                            variant="outline-warning"
-                            className="edit-button"
-                            onClick={() => handleEdit(account)}
-                          >
-                            Sửa
-                          </Button>
+                          
                           <Button
                             variant="outline-danger"
                             className="delete-button"

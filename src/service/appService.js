@@ -66,4 +66,8 @@ export const bookServ={
     updateOrigin: (id, data) =>{
         return https.put(`/api/bookmedias/${id}`, data, { headers: configHeader() });
     },
+
+    getOrder: () =>{
+        return https.get("/api/invoices", { headers: configHeader() });
+    },
 }

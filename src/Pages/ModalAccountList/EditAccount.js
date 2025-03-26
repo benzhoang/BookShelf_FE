@@ -4,6 +4,7 @@ import "./editAccount.css";
 
 
 const EditListProduct = ({ show, handleClose, account }) => {
+  console.log(account)
   if (!account) return null;
   
 
