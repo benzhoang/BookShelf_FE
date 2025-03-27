@@ -25,6 +25,18 @@ const OrderList = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [curPage, setCurPage] = useState(1);
   const [datas, setDatas] = useState([]);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+        bookServ
+          .getProfile()
+          .then((res) => {
+            setUserData(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }, []);
 
   useEffect(() => {
     bookServ
@@ -158,20 +170,22 @@ const OrderList = () => {
                       </td>
                       <td>{order.payStatus}</td>
                       <td>{order.totalPrice}Đ</td>
-                      <td>
-                        <Button
-                          variant="outline-warning"
-                          onClick={() => handleEdit(order)}
-                        >
-                          Sửa
-                        </Button>
-                        <Button
-                          variant="outline-danger"
-                          onClick={() => handleDelete(order)}
-                        >
-                          Xóa
-                        </Button>
-                      </td>
+                        {(userData?.role === 'Admin' || userData?.role === 'Manager' || userData?.role === 'Staff') && (
+                          <td>
+                          <Button
+                            variant="outline-warning"
+                            onClick={() => handleEdit(order)}
+                          >
+                            Sửa
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            onClick={() => handleDelete(order)}
+                          >
+                            Xóa
+                          </Button>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>

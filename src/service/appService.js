@@ -78,4 +78,8 @@ export const bookServ={
     deleteAccout: (id) =>{
         return https.delete(`/api/users/${id}`, { headers: configHeader() });
     },
+
+    updateOrder: (id, data) =>{
+        return https.put(`/api/invoices/${id}`, data, { headers: configHeader() });
+    },
 }

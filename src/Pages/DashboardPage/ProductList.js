@@ -33,6 +33,7 @@ const ProductList = () => {
   const [totalPriceSel, setTotalPriceSel] = useState(0);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedDetailBook, setSelectedDetailBook] = useState(null);
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     bookServ
@@ -62,6 +63,19 @@ const ProductList = () => {
       })
       .catch((err) => console.log(err));
   }, []);
+
+   useEffect(() => {
+      bookServ
+        .getProfile()
+        .then((res) => {
+          setUserData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }, []);
+
+    console.log(userData?.role)
 
   const handleEdit = (book) => {
     setSelectedBook(book);
@@ -151,13 +165,16 @@ const ProductList = () => {
                   className="search-input"
                 />
               </div>
-              <Button
-                variant="primary"
-                className="add-button"
-                onClick={handleAdd}
-              >
-                Thêm sách
-              </Button>
+              {(userData?.role === 'Admin' || userData?.role === 'Manager') && (
+                <Button
+                  variant="primary"
+                  className="add-button"
+                  onClick={handleAdd}
+                >
+                  Thêm sách
+                </Button>
+              )}
+              
             </div>
 
             <div className="table-responsive">
@@ -169,7 +186,9 @@ const ProductList = () => {
                     <th>Giá Bán</th>
                     <th>Tồn kho</th>
                     <th>Đã bán</th>
-                    <th>Action</th>
+                    {(userData?.role === 'Admin' || userData?.role === 'Manager') && (
+                      <th>Action</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -180,24 +199,27 @@ const ProductList = () => {
                       <td className="price" onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{product.price.$numberDecimal}</td>
                       <td onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{product.quantity}</td>
                       <td onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{product.soldQuantity}</td>
-                      <td>
-                        <div className="action-buttons">
-                          <Button
-                            variant="outline-warning"
-                            className="edit-button"
-                            onClick={() => handleEdit(product)}
-                          >
-                            Sửa
-                          </Button>
-                          <Button
-                            variant="outline-danger"
-                            className="delete-button"
-                            onClick={() => handleDelete(product)}
-                          >
-                            Xóa
-                          </Button>
-                        </div>
-                      </td>
+                      {(userData?.role === 'Admin' || userData?.role === 'Manager') &&  (
+                        <td>
+                          <div className="action-buttons">
+                            <Button
+                              variant="outline-warning"
+                              className="edit-button"
+                              onClick={() => handleEdit(product)}
+                            >
+                              Sửa
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              className="delete-button"
+                              onClick={() => handleDelete(product)}
+                            >
+                              Xóa
+                            </Button>
+                          </div>
+                        </td>
+                      )}
+                      
                     </tr>
                   ))}
                 </tbody>

@@ -37,9 +37,12 @@ export default function LoginPage() {
       .then((res) => {
         localUserServ.set(res.data)
         dispatch(setLoginAction(res.data));
+
+        if(res.data.role === "Customer"){
+          navigate("/custom");
+        }
         navigate("/product");
         window.location.reload()
-        
       })
       .catch((err) => {
         console.log(err);

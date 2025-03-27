@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 import "./editListProduct.css";
-import { orderServ } from "../../service/appService";
+import { bookServ, orderServ } from "../../service/appService";
 
 const EditListProduct = ({ show, handleClose, order }) => {
   const [formData, setFormData] = useState({
@@ -42,10 +42,15 @@ const EditListProduct = ({ show, handleClose, order }) => {
     }
 
     try {
-      // await orderServ.updateOrder(order._id, formData);
-      // console.log("Update success");
-      // handleClose();
-      // window.location.reload();
+      const data = {
+        totalPrice: formData.totalPrice,
+        payStatus: formData.payStatus
+      }
+      console.log(data)
+      await bookServ.updateOrder(order._id, data);
+      console.log("Update success");
+      handleClose();
+      window.location.reload();
     } catch (error) {
       console.error("Update failed:", error);
     }
