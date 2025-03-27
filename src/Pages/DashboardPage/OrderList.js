@@ -125,7 +125,7 @@ const OrderList = () => {
                 >
                   <option value="">Tất cả trạng thái</option>
                   <option value="Success">Đã thanh toán</option>
-                  <option value="pendig">Chưa thanh toán</option>
+                  <option value="Pending">Chưa thanh toán</option>
                 </Form.Select>
                 <Form.Control
                   type="number"
