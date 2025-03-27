@@ -85,9 +85,19 @@ const ProductList = () => {
   const handleCloseDelete = () => setShowDeleteModal(false);
   const handleCloseAdd = () => setShowAddModal(false);
 
-  // Pagination
-  const totalPages = Math.ceil(dataBook.length / ITEMS_PER_PAGE);
-  const displayedBooks = dataBook.slice(
+
+  const filteredBooks = dataBook.filter((book) =>
+    book.bookName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // **Cập nhật số trang khi danh sách thay đổi**
+  useEffect(() => {
+    setCurPage(1);
+  }, [searchTerm]);
+
+  // **Tính toán số trang và danh sách hiển thị**
+  const totalPages = Math.ceil(filteredBooks.length / ITEMS_PER_PAGE);
+  const displayedBooks = filteredBooks.slice(
     (curPage - 1) * ITEMS_PER_PAGE,
     curPage * ITEMS_PER_PAGE
   );
@@ -103,7 +113,7 @@ const ProductList = () => {
                   <div className="stats-title">TỔNG ĐÃ BÁN</div>
                   <div className="stats-value">
                     {total}{" "}
-                    <span className="stats-unit">~${totalPriceSel}K</span>
+                    <span className="stats-unit">~{totalPriceSel}</span>
                   </div>
                 </div>
                 <HiOutlineShoppingBag size={80} className="stats-icon" />
@@ -116,7 +126,7 @@ const ProductList = () => {
                 <div>
                   <div className="stats-title">TỔNG TỒN KHO</div>
                   <div className="stats-value">
-                    {quan} <span className="stats-unit">~${totalPrice}K</span>
+                    {quan} <span className="stats-unit">~{totalPrice}</span>
                   </div>
                 </div>
                 <FaBoxOpen size={80} className="stats-icon" />
@@ -167,7 +177,7 @@ const ProductList = () => {
                     <tr key={product.id}>
                       <td onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
                       <td className="book-title" onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{product.bookName}</td>
-                      <td className="price" onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{product.price.$numberDecimal}$</td>
+                      <td className="price" onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{product.price.$numberDecimal}</td>
                       <td onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{product.quantity}</td>
                       <td onClick={() => handleShowDetail(product)} style={{ cursor: "pointer" }}>{product.soldQuantity}</td>
                       <td>

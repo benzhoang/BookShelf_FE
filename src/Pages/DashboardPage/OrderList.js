@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { BsSearch } from "react-icons/bs";
-import EditOrderList from "../ModalOrderList/EditOrderList";
 import { Table, Form, Container, Button, Card } from "react-bootstrap";
+import EditOrderList from "../ModalOrderList/EditOrderList";
 import DeleteOrderList from "../ModalOrderList/DeleteOrderList";
 import AddOrderList from "../ModalOrderList/AddOrderList";
 import DetailOrderList from "../ModalOrderList/DetailOrderList";
-import "./OrderList.css";
 import { bookServ } from "../../service/appService";
+import "./OrderList.css";
 
 const ITEMS_PER_PAGE = 4;
 
 const OrderList = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [employeeSearch, setEmployeeSearch] = useState("");
+  const [dateStart, setDateStart] = useState("");
+  const [dateEnd, setDateEnd] = useState("");
+  const [payStatus, setPayStatus] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -20,26 +26,40 @@ const OrderList = () => {
   const [curPage, setCurPage] = useState(1);
   const [datas, setDatas] = useState([]);
 
-
   useEffect(() => {
-      bookServ
-        .getOrder()
-        .then((res) => {
-          setDatas(res.data);
-          
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }, []);
-  
+    bookServ
+      .getOrder()
+      .then((res) => {
+        setDatas(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  // Filter orders based on search inputs
+  const filteredOrders = datas.filter((order) => {
+    const orderCode = `MO-${order._id.slice(-3)}`.toLowerCase();
+    const employeeCode = order.userID?._id
+      ? `MN-${order.userID._id.slice(-3)}`.toLowerCase()
+      : "Nhân viên đã nghỉ làm";
+    const orderDate = new Date(order.createdAt);
+    const totalPrice = parseFloat(order.totalPrice);
+
+    return (
+      orderCode.includes(searchTerm.toLowerCase()) &&
+      employeeCode.includes(employeeSearch.toLowerCase()) &&
+      (!dateStart || orderDate >= new Date(dateStart)) &&
+      (!dateEnd || orderDate <= new Date(dateEnd)) &&
+      (!payStatus || order.payStatus === payStatus) &&
+      (!minPrice || totalPrice >= parseFloat(minPrice)) &&
+      (!maxPrice || totalPrice <= parseFloat(maxPrice))
+    );
+  });
 
   // Pagination
-  const totalPages = Math.ceil(datas.length / ITEMS_PER_PAGE);
-
-
-  // Get current page items
-  const displayedOrders = datas.slice(
+  const totalPages = Math.ceil(filteredOrders.length / ITEMS_PER_PAGE);
+  const displayedOrders = filteredOrders.slice(
     (curPage - 1) * ITEMS_PER_PAGE,
     curPage * ITEMS_PER_PAGE
   );
@@ -54,15 +74,6 @@ const OrderList = () => {
     setShowDeleteModal(true);
   };
 
-  const handleAdd = () => {
-    setShowAddModal(true);
-  };
-
-  const handleDetail = (order) => {
-    setSelectedOrder(order);
-    setShowDetailModal(true);
-  };
-
   return (
     <div className="order-list-container">
       <Container className="py-4">
@@ -71,15 +82,50 @@ const OrderList = () => {
             DANH SÁCH ĐƠN HÀNG
           </Card.Header>
           <Card.Body>
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <div className="search-container">
-                <BsSearch className="search-icon" />
+            <div className="filter-container">
+              <div className="d-flex gap-2 mb-3">
                 <Form.Control
                   type="text"
                   placeholder="Tìm kiếm mã đơn hàng..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
+                />
+
+                <Form.Control
+                  type="text"
+                  placeholder="Mã nhân viên..."
+                  value={employeeSearch}
+                  onChange={(e) => setEmployeeSearch(e.target.value)}
+                />
+                <Form.Control
+                  type="date"
+                  value={dateStart}
+                  onChange={(e) => setDateStart(e.target.value)}
+                />
+                <Form.Control
+                  type="date"
+                  value={dateEnd}
+                  onChange={(e) => setDateEnd(e.target.value)}
+                />
+                <Form.Select
+                  value={payStatus}
+                  onChange={(e) => setPayStatus(e.target.value)}
+                >
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="Success">Đã thanh toán</option>
+                  <option value="pendig">Chưa thanh toán</option>
+                </Form.Select>
+                <Form.Control
+                  type="number"
+                  placeholder="Giá tối thiểu"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                />
+                <Form.Control
+                  type="number"
+                  placeholder="Giá tối đa"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
                 />
               </div>
             </div>
@@ -88,41 +134,43 @@ const OrderList = () => {
               <Table className="order-table">
                 <thead>
                   <tr>
-                    <th width="5%">STT</th>
-                    <th width="25%">Mã Đơn Hàng</th>
-                    <th width="25%">Mã Nhân Viên</th>
-                    <th width="25%">Ngày Bán</th>
-                    <th width="25%">Trạng Thái</th>
-                    <th width="25%">Tổng Tiền</th>
-                    <th width="20%">Action</th>
+                    <th>STT</th>
+                    <th>Mã Đơn Hàng</th>
+                    <th>Mã Nhân Viên</th>
+                    <th>Ngày Bán</th>
+                    <th>Trạng Thái</th>
+                    <th>Tổng Tiền</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {displayedOrders.map((order, index) => (
                     <tr key={`order-${order._id}`}>
                       <td>{(curPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
-                      <td className="order-code">MO-{order._id.slice(-3)}</td>
-                      <td className="employee-id">MN-{order.userID?._id.slice(-3)}</td>
-                      <td>{new Date(order.createdAt).toLocaleDateString("vi-VN")}</td>
-                      <td className="order-code">{order.payStatus}</td>
-                      <td className="order-code">{order.totalPrice}Đ</td>
+                      <td>MO-{order._id.slice(-3)}</td>
                       <td>
-                        <div className="action-buttons">
-                          <Button
-                            variant="outline-warning"
-                            className="edit-button"
-                            onClick={() => handleEdit(order)}
-                          >
-                            Sửa
-                          </Button>
-                          <Button
-                            variant="outline-danger"
-                            className="delete-button"
-                            onClick={() => handleDelete(order)}
-                          >
-                            Xóa
-                          </Button>
-                        </div>
+                        {order.userID?._id
+                          ? `MN-${order.userID._id.slice(-3)}`
+                          : "Nhân viên đã nghỉ làm"}
+                      </td>
+                      <td>
+                        {new Date(order?.createdAt).toLocaleDateString("vi-VN")}
+                      </td>
+                      <td>{order.payStatus}</td>
+                      <td>{order.totalPrice}Đ</td>
+                      <td>
+                        <Button
+                          variant="outline-warning"
+                          onClick={() => handleEdit(order)}
+                        >
+                          Sửa
+                        </Button>
+                        <Button
+                          variant="outline-danger"
+                          onClick={() => handleDelete(order)}
+                        >
+                          Xóa
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -130,26 +178,23 @@ const OrderList = () => {
               </Table>
             </div>
 
-            {/* Pagination Controls */}
             <div className="pagination-container">
               <Button
                 variant="outline-secondary"
                 onClick={() => setCurPage((prev) => Math.max(prev - 1, 1))}
                 disabled={curPage === 1}
-                className="pagination-button"
               >
                 &laquo; Trang trước
               </Button>
-              <div className="pagination-info">
+              <span>
                 Trang {curPage} / {totalPages}
-              </div>
+              </span>
               <Button
                 variant="outline-secondary"
                 onClick={() =>
                   setCurPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={curPage === totalPages}
-                className="pagination-button"
               >
                 Trang sau &raquo;
               </Button>

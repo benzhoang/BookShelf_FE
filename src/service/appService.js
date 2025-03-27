@@ -70,4 +70,12 @@ export const bookServ={
     getOrder: () =>{
         return https.get("/api/invoices", { headers: configHeader() });
     },
+
+    deleteOrder: (id) =>{
+        return https.delete(`/api/invoices/${id}`, { headers: configHeader() });
+    },
+
+    deleteAccout: (id) =>{
+        return https.delete(`/api/users/${id}`, { headers: configHeader() });
+    },
 }

@@ -16,7 +16,7 @@ const EditListProduct = ({ show, handleClose, order }) => {
   useEffect(() => {
     if (order) {
       setFormData({
-        userName: order.userID?.userName || "",
+        userName: order.userID?.userName || "Nhân viên đã nghỉ làm",
         payStatus: order.payStatus || "",
         paymentID: order.paymentID || "",
         totalPrice: order.totalPrice || "",
@@ -66,7 +66,7 @@ const EditListProduct = ({ show, handleClose, order }) => {
       ></Modal.Header>
       <Modal.Body className="px-5 modal-body-custom">
         <h3 className="text-center text-white mb-4">
-          Edit Order: MO-{order?._id?.slice(-3)}
+          Edit Order: {order?._id}
         </h3>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-4">
@@ -108,7 +108,7 @@ const EditListProduct = ({ show, handleClose, order }) => {
             <Form.Control
               type="text"
               name="createAt"
-              value={new Date(order.createdAt).toLocaleDateString("vi-VN")}
+              value={new Date(order?.createdAt).toLocaleDateString("vi-VN")}
               disabled
               className="p-2 rounded-3 border-0"
             />
